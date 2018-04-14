@@ -43,6 +43,13 @@ public class CoffeeSucks extends JPanel implements ActionListener, MouseListener
     String currentRoom = "";
     static CoffeeSucks mainObj;
     String snd_blip = (dir + "\\TTRAssets\\blip.wav");
+    ArrayList<Card> currentHand = new ArrayList<>();
+    ArrayList<Card> selectedCards = new ArrayList<>();
+    int[] dock = new int[6];
+    ArrayList<Card> dockedCards = new ArrayList<>();
+    int debugTime = 0;
+    int debugFrames = 0;
+    ArrayList<Integer> currentPlayerOwns = new ArrayList<>();
 
     public CoffeeSucks() throws FontFormatException, IOException {
         //custom font stuff
@@ -51,6 +58,13 @@ public class CoffeeSucks extends JPanel implements ActionListener, MouseListener
         bigFont = customFont.deriveFont(24f);
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File(fontpath)));
+        dock[0] = 15;
+        dock[1] = 115;
+        dock[2] = 215;
+        dock[3] = 315;
+        dock[4] = 415;
+        dock[5] = 515;
+
     }
 
     /**
@@ -77,7 +91,7 @@ public class CoffeeSucks extends JPanel implements ActionListener, MouseListener
         frame.setSize(screenSize); //sets size
         frame.setVisible(true);
         timer.start();
-
+        
         //time to create funtime tons of polyboys
         RoadPath rp1 = new RoadPath(515, 122, 525, 26, 557, 27, 530, 121, "Green", 5, 1);
         hitBoxes.add(rp1);
@@ -297,36 +311,40 @@ public class CoffeeSucks extends JPanel implements ActionListener, MouseListener
         hitBoxes.add(rp108);
         RoadPath rp109 = new RoadPath(480,575,484,607,442,596,472,572, "Orange", 2, 109);
         hitBoxes.add(rp109);
+        Deck deck1 = new Deck(1130, 605);
+        objs.add(deck1);
+
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         long start = System.nanoTime();
         super.paintComponent(g);
-        g.setFont(bigFont); // ******************SETS FONT FOR GAME**************
+        //g.setFont(bigFont); // ******************SETS FONT FOR GAME**************
         int width = this.getWidth();
         int height = this.getHeight();
         g.setColor(Color.white); //BACKGROUND COLOR OF ROOM
-        g.fillRect(0, 0, width, height);
+        //g.fillRect(0, 0, width, height);
         //the rest of this is frametime stuff, PUT STEPS HERE
         if (frameCount == FPS) {
             averageTime = totalTime / FPS;
             totalTime = 0;
             frameCount = 0;
+            debugFrames++;
         } else {
             totalTime += System.nanoTime() - start;
-            step();
+            step();;
             frameCount++;
         }
 
         if (currentRoom.equals("GameBoard")) {
             //drawing specifc things
             BufferedImage imgBG = null;
-            String pathBG = (dir + "\\TTRAssets\\board.png");
+            String pathBG = (dir + "\\TTRAssets\\rd.png");
             BufferedImage mapBG = null;
             String pathMap = (dir + "\\TTRAssets\\map.png");
             Image coolBG = null;
-            String pathcoolBG = (dir + "\\TTRAssets\\oldpaper.jpg");
+            String pathcoolBG = (dir + "\\TTRAssets\\olaper.jpg");
             try {
                 imgBG = ImageIO.read(new File(pathBG));
                 coolBG = new ImageIcon(pathcoolBG).getImage();
@@ -337,21 +355,54 @@ public class CoffeeSucks extends JPanel implements ActionListener, MouseListener
             g.drawImage(coolBG, -0, 0, this);
             g.drawImage(ROOM_BACKGROUND, 0, 0, this);
             g.drawImage(mapBG, -0, 0, this);
+            g.setColor(Color.BLACK);
+            g.drawString(Integer.toString(dockedCards.size()), 40, 50);
+            g.drawString(Integer.toString(currentHand.size()), 40, 70);
+            g.drawString(Integer.toString(debugTime), 40, 90);
+            g.drawString(Integer.toString(debugFrames), 40, 110);
+            
             //the magic line. This draws every object in the objs array
             Graphics2D g2 = (Graphics2D) g;
-
+            
             for (GameObject curr : objs) {
                 if (curr.visible) {
                     g.drawImage(curr.sprite_index, curr.x, curr.y, this);
                     g.drawImage(curr.topSpr, curr.x, curr.y, this);
-
+                    g2.setColor(Color.BLACK);
+                    //g2.draw(curr.mask);
                 }
 
             }
-            for (RoadPath curr : hitBoxes) {
-                g.setColor(Color.BLACK);
-                //g.drawPolygon(curr.boundBox);
+            for (GameObject curr : dockedCards) {
+                if (curr.visible) {
+                    g.drawImage(curr.sprite_index, curr.x, curr.y, this);
+                    g.drawImage(curr.topSpr, curr.x, curr.y, this);
+                    g2.setColor(Color.BLACK);
+                    //g2.draw(curr.mask);
+                }
+
             }
+            for (Card curr : currentHand) {
+                    g.drawImage(curr.sprite_index, curr.x, curr.y, this);
+                    g.drawImage(curr.topSpr, curr.x, curr.y, this);
+                    g2.setColor(Color.BLACK);
+                    //g2.draw(curr.mask);
+                
+
+            }
+            for (Card curr : selectedCards) {
+                    g.drawImage(curr.sprite_index, curr.x, curr.y, this);
+                    g.drawImage(curr.topSpr, curr.x, curr.y, this);
+                    g2.setColor(Color.BLACK);
+                    //g2.draw(curr.mask);
+                
+
+            }
+            //for (RoadPath curr : hitBoxes) {
+            //    g.setColor(Color.BLACK);
+            //    g.drawPolygon(curr.boundBox);
+            //}
+
         }
     }
 
@@ -367,8 +418,18 @@ public class CoffeeSucks extends JPanel implements ActionListener, MouseListener
     public void step() {
         for (GameObject curr : objs) {
             curr.step();
-            curr.collisionCheck(objs);
+            //curr.collisionCheck(objs);
         }
+        for (Card curr2 : dockedCards) {
+            curr2.step();
+        }
+        for (Card curr3 : currentHand) {
+            curr3.step();
+        }
+         for (Card curr4 : selectedCards) {
+            curr4.step();
+        }
+        debugTime++;
     }
 
     public void mouseEntered(MouseEvent e) {
@@ -392,6 +453,69 @@ public class CoffeeSucks extends JPanel implements ActionListener, MouseListener
         int x = e.getX();
         int y = e.getY() - 25;
         Point p = new Point(x, y);
+
+        for (GameObject curr : objs) {
+            if (curr.mask.contains(p)) {
+                if (curr instanceof Deck) {
+                    if (dockedCards.size() < 6) {
+                        dockedCards.add(new Card(curr.x, curr.y, "Red", "docked", ((Deck) curr).x, dock[dockedCards.size()]));
+                         dockedCards.add(new Card(curr.x, curr.y, "Blue", "docked", ((Deck) curr).x, dock[dockedCards.size()]));
+                        
+                    }
+                }
+            }
+        }
+
+        for (Card curr : dockedCards) {
+            if (curr.mask.contains(p)) {
+                for (int i = 0; i<dockedCards.size();i++){
+                        dockedCards.get(i).moveTowardsPoint(dockedCards.get(i).x,dock[i],10);
+                    }
+                if (curr.vspeed == 0) {
+                    currentHand.add(new Card(curr.getX(), curr.getY(),curr.myColor, "hand", 264 + 100 * currentHand.size(),675));
+                    curr.visible = false;
+                    for (Card curr2 : dockedCards) {
+                        if (curr == curr2) {
+                            dockedCards.remove(curr);
+                        }
+                    }  
+                }
+                
+                }
+            }
+        
+        for (Card curr : currentHand) {
+            if (curr.mask.contains(p)) {
+                if (curr.vspeed == 0) {
+                    selectedCards.add(new Card(/*curr.getX(), curr.getY(),*/curr.getX(),curr.getY(), curr.myColor, "selected", curr.getX(),curr.getY()-20));
+                    curr.visible = false;
+                    for (Card curr2 : currentHand) {
+                        if (curr == curr2) {
+                            currentHand.remove(curr);
+                        }
+                    }  
+                }
+                
+                }
+            }
+        
+        for (Card curr : selectedCards) {
+            if (curr.mask.contains(p)) {
+                if (curr.vspeed == 0) {
+                    currentHand.add(new Card(/*curr.getX(), curr.getY(),*/curr.getX(),curr.getY(), curr.myColor, "hand", curr.getX(),curr.getY()+20));
+                    curr.visible = false;
+                    for (Card curr2 : selectedCards) {
+                        if (curr == curr2) {
+                            selectedCards.remove(curr);
+                        }
+                    }  
+                }
+                
+                }
+            }
+        
+        
+
 
         for (RoadPath curr : hitBoxes) {
             if (curr.boundBox.contains(p)) {

@@ -59,6 +59,7 @@ abstract class GameObject {
     boolean HIT;
     AudioInputStream nowplaying;
     Image topSpr;
+    boolean Solid = true;
 
     public void jumpX(int newX) {
         x = newX;
@@ -157,6 +158,7 @@ abstract class GameObject {
         //check if a destination has been reached
         this.tripCheck();
         //check collisions
+        if (Solid)
         this.colEvent();
         debugData = (x + ", " + y + ", " + (x+hitboxWidth) + ", " + (y+hitboxHeight) + ", " + hitboxWidth + ", " + hitboxHeight );
         mask =  new Rectangle2D.Double(x+xoffset,y+yoffset,hitboxWidth,hitboxHeight);
