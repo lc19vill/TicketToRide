@@ -20,6 +20,11 @@ import java.awt.Image;
 public class RoadPath {
     Polygon boundBox = new Polygon();
     int ID;
+    Image sprite_index = null;
+    String myColor;
+    int myLength;
+    int myOwn = 0;
+    
     
     public RoadPath(int x1, int y1, int x2, int y2,int x3, int y3, int x4, int y4, String color, int length,int IDNUM){
     
@@ -28,7 +33,21 @@ public class RoadPath {
     boundBox.addPoint(x3,y3);
     boundBox.addPoint(x4,y4);
     boundBox.addPoint(x1,y1);
-    ID = IDNUM;
+    ID = IDNUM;   
+    myColor = color;
+    myLength = length;
     }   
+    
+    public void setOwn(int newOwn){
+        myOwn = newOwn;
+    }
+    
 }
 
+
+
+
+
+
+
+            

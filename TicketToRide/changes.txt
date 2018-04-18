@@ -1,0 +1,9 @@
+if 2 or 3 players
+for mulipaths
+when you buy one of the set, destroy the other hitboxes
+
+add check if player has enough trains for length
+
+destintion tickets have different point values
+
+https://ncdn0.daysofwonder.com/tickettoride/en/img/tg_rules_2017_en.pdf
