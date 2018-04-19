@@ -1,0 +1,18 @@
+/*
+        //TASK 2 - CHECK TICKET METHOD TOO
+        //for short cards REMEBER that since places is an arraylist, the 
+        //location numbers will be one less                this is 8      this is 18 
+        tickDeck.add(new Ticket(0,0,1,"short","deck",townList.get(7),townList.get(17)));    
+        */
+        
+        
+        CONSTRUCTOR FOR REFERENCE
+         public Ticket(int myX,int myY, int ID,String val,String state,Town s, Town d)
+         
+         myX = always 0
+         myY = always 0
+         ID = should match the number in the folder with the pictures of the cards
+         val = "short" for short cards, "long" for long cards
+         state = always "deck"
+         Town s = the start position (one of the two towns)
+         Town d = the destination (the other town)
