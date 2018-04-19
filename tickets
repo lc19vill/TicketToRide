@@ -1,0 +1,108 @@
+smallTickDeck.add(new Ticket(0,0,1,2,"deck",townList.get(20),townList.get(21)));   
+smallTickDeck.add(new Ticket(0,0,2,3,"deck",townList.get(24),townList.get(21)));   
+smallTickDeck.add(new Ticket(0,0,3,4,"deck",townList.get(23),townList.get(21)));   
+smallTickDeck.add(new Ticket(0,0,4,4,"deck",townList.get(4),townList.get(2)));   
+smallTickDeck.add(new Ticket(0,0,5,4,"deck",townList.get(32),townList.get(28)));   
+smallTickDeck.add(new Ticket(0,0,6,4,"deck",townList.get(18),townList.get(23)));   
+smallTickDeck.add(new Ticket(0,0,7,4,"deck",townList.get(18),townList.get(32)));  
+smallTickDeck.add(new Ticket(0,0,8,4,"deck",townList.get(20),townList.get(35)));   
+smallTickDeck.add(new Ticket(0,0,9,4,"deck",townList.get(10),townList.get(14)));  
+smallTickDeck.add(new Ticket(0,0,10,5,"deck",townList.get(29),townList.get(21)));  
+smallTickDeck.add(new Ticket(0,0,11,5,"deck",townList.get(6),townList.get(18)));   
+smallTickDeck.add(new Ticket(0,0,12,6,"deck",townList.get(29),townList.get(30)));   
+smallTickDeck.add(new Ticket(0,0,13,6,"deck",townList.get(11),townList.get(20)));   
+smallTickDeck.add(new Ticket(0,0,14,6,"deck",townList.get(13),townList.get(35)));   
+smallTickDeck.add(new Ticket(0,0,15,6,"deck",townList.get(10),townList.get(26)));   
+smallTickDeck.add(new Ticket(0,0,16,6,"deck",townList.get(6),townList.get(12)));   
+smallTickDeck.add(new Ticket(0,0,17,6,"deck",townList.get(7),townList.get(4)));   
+smallTickDeck.add(new Ticket(0,0,18,6,"deck",townList.get(9),townList.get(14)));   
+smallTickDeck.add(new Ticket(0,0,19,7,"deck",townList.get(5),townList.get(18)));   
+smallTickDeck.add(new Ticket(0,0,20,7,"deck",townList.get(4),townList.get(10)));   
+smallTickDeck.add(new Ticket(0,0,21,7,"deck",townList.get(10),townList.get(13)));   
+smallTickDeck.add(new Ticket(0,0,22,7,"deck",townList.get(4),townList.get(12)));   
+smallTickDeck.add(new Ticket(0,0,23,7,"deck",townList.get(9),townList.get(23)));  
+smallTickDeck.add(new Ticket(0,0,24,7,"deck",townList.get(19),townList.get(22)));   
+smallTickDeck.add(new Ticket(0,0,25,7,"deck",townList.get(14),townList.get(25)));   
+smallTickDeck.add(new Ticket(0,0,26,7,"deck",townList.get(29),townList.get(35)));   
+smallTickDeck.add(new Ticket(0,0,27,7,"deck",townList.get(25),townList.get(21)));   
+smallTickDeck.add(new Ticket(0,0,28,7,"deck",townList.get(11),townList.get(13)));   
+smallTickDeck.add(new Ticket(0,0,29,8,"deck",townList.get(36),townList.get(29)));   
+smallTickDeck.add(new Ticket(0,0,30,8,"deck",townList.get(29),townList.get(33)));  
+smallTickDeck.add(new Ticket(0,0,31,8,"deck",townList.get(41),townList.get(23)));   
+smallTickDeck.add(new Ticket(0,0,32,8,"deck",townList.get(18),townList.get(25)));
+smallTickDeck.add(new Ticket(0,0,33,8,"deck",townList.get(23),townList.get(34)));   
+smallTickDeck.add(new Ticket(0,0,34,9,"deck",townList.get(11),townList.get(15)));   
+smallTickDeck.add(new Ticket(0,0,35,9,"deck",townList.get(24),townList.get(29)));   
+smallTickDeck.add(new Ticket(0,0,36,9,"deck",townList.get(4),townList.get(18)));   
+smallTickDeck.add(new Ticket(0,0,37,9,"deck",townList.get(32),townList.get(27)));   
+smallTickDeck.add(new Ticket(0,0,38,9,"deck",townList.get(8),townList.get(21)));   
+smallTickDeck.add(new Ticket(0,0,39,9,"deck",townList.get(41),townList.get(32)));   
+smallTickDeck.add(new Ticket(0,0,40,10,"deck",townList.get(0),townList.get(10)));   
+smallTickDeck.add(new Ticket(0,0,41,10,"deck",townList.get(0),townList.get(40)));   	
+smallTickDeck.add(new Ticket(0,0,42,10,"deck",townList.get(17),townList.get(30))); 
+smallTickDeck.add(new Ticket(0,0,43,10,"deck",townList.get(12),townList.get(33)));   
+smallTickDeck.add(new Ticket(0,0,44,10,"deck",townList.get(18),townList.get(39)));   
+smallTickDeck.add(new Ticket(0,0,45,10,"deck",townList.get(14),townList.get(23)));   
+smallTickDeck.add(new Ticket(0,0,46,10,"deck",townList.get(4),townList.get(14)));  
+smallTickDeck.add(new Ticket(0,0,47,10,"deck",townList.get(23),townList.get(37) || townList.get(38)));   
+smallTickDeck.add(new Ticket(0,0,48,10,"deck",townList.get(4),townList.get(19)));   
+smallTickDeck.add(new Ticket(0,0,49,10,"deck",townList.get(6),townList.get(10)));   
+smallTickDeck.add(new Ticket(0,0,50,11,"deck",townList.get(15),townList.get(18)));   
+smallTickDeck.add(new Ticket(0,0,51,11,"deck",townList.get(4),townList.get(23)));   
+smallTickDeck.add(new Ticket(0,0,52,11,"deck",townList.get(10),townList.get(31)));   
+smallTickDeck.add(new Ticket(0,0,53,11,"deck",townList.get(18),townList.get(27)));  
+smallTickDeck.add(new Ticket(0,0,54,11,"deck",townList.get(14),townList.get(29)));   
+smallTickDeck.add(new Ticket(0,0,55,11,"deck",townList.get(18),townList.get(29)));   
+
+ 
+
+
+
+
+
+
+ 
+
+
+
+  
+
+
+
+
+
+
+
+
+
+   
+
+ 
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+ 
+
+ 
+
+
+
+
+
