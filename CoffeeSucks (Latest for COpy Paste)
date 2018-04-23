@@ -142,7 +142,7 @@ public class CoffeeSucks extends JPanel implements ActionListener, MouseListener
     int tixFromPile = 0;
     int tixNeedToKeep = 2;
     Point[] tixPix = new Point[4];
-    ArrayList<Town> checkedTowns = new ArrayList<>();
+    ArrayList<RoadPath> checkedTowns = new ArrayList<>();
     boolean finalRound = false;
     int lastPlayer;
     int tixPicked = 0;
@@ -150,6 +150,7 @@ public class CoffeeSucks extends JPanel implements ActionListener, MouseListener
     boolean stepping = true;
     boolean canEnd = false;
     Player[] ranked;
+    ArrayList<Town> rolledTowns = new ArrayList<>();
 
     public CoffeeSucks() throws FontFormatException, IOException {
         //custom font stuff
@@ -1158,7 +1159,8 @@ public class CoffeeSucks extends JPanel implements ActionListener, MouseListener
         } catch (Exception ex) {
         }
         
-        //calcRes();
+        stepping = true;
+        calcRes();
         
     }
 
@@ -1220,7 +1222,7 @@ public class CoffeeSucks extends JPanel implements ActionListener, MouseListener
             //g.drawString(" " + meepTime, 40, 110);
 
             //g.drawString(test2, 40, 550);
-            g.drawString(Integer.toString(lastPlayer), 100, 100);
+            //g.drawString(Integer.toString(lastPlayer), 100, 100);
             //g.drawString(Integer.toString(largeTickDeck.size()), 40, 110);
             //g.drawString(Integer.toString(debugCount), 40, 130);
             //the magic line. This draws every object in the objs array
@@ -1268,10 +1270,15 @@ public class CoffeeSucks extends JPanel implements ActionListener, MouseListener
 
             }
 
-            for (RoadPath curr : hitBoxes) {
-                g.setColor(Color.BLACK);
-                //g.drawPolygon(curr.boundBox);
+
+            String arPath = (dir + "\\TTRAssets\\dest.png");
+            Image lookHere =  new ImageIcon(arPath).getImage();
+            
+            for (Town curr : rolledTowns) {
+                //g.setColor(Color.RED);
+                g.drawImage(lookHere,curr.xLoc,curr.yLoc-41,this);
             }
+            
             for (Button curr : meepButts) {
                 g.drawImage(curr.sprite_index, curr.x, curr.y, this);
                 //if (curr.active)
@@ -1586,11 +1593,18 @@ public class CoffeeSucks extends JPanel implements ActionListener, MouseListener
                 }
             }
             
-            if(canEnd){
+             if((canEnd) /*|| (myPlayers[currentPlayer-1].numTrains < 5)*/){
             String endButt = (dir + "\\TTRAssets\\tickets\\done.png");
             Image eB = new ImageIcon(endButt).getImage();
             g.drawImage(eB, (int) meepButt[7].getX(), (int) meepButt[7].getY(), this);
             }
+            
+            if (!stepping){
+                 String loadStr = (dir + "\\TTRAssets\\loading.png");
+            Image load = new ImageIcon(loadStr).getImage();
+            g.drawImage(load,340 ,60, this);
+            }
+            
 
         }
         if (currentRoom.equals("Title")) {
@@ -1630,16 +1644,13 @@ public class CoffeeSucks extends JPanel implements ActionListener, MouseListener
         
         if (currentRoom.equals("Results")) {
             //drawing specifc things
-            BufferedImage resBack = null;
-            String resBG = (dir + "\\TTRAssets\\results.png");
-            Image aniBG = null;
-            String aniPath = (dir + "\\TTRAssets\\animatedtitle.gif");
-            try {
-                resBack = ImageIO.read(new File(resBG));
-                aniBG = new ImageIcon(aniPath).getImage();
-                //setBackground(imgBG);
+            String resBG = (dir + "\\TTRAssets\\resultsback.png");
+            Image resBack = null;
+            try{
+            resBack = ImageIO.read(new File(resBG));
             } catch (IOException e) {
             }
+
 
             //g.drawImage(aniBG, 0, 100, this);
             g.drawImage(resBack, 0, 0, this);
@@ -1647,15 +1658,26 @@ public class CoffeeSucks extends JPanel implements ActionListener, MouseListener
             g.setColor(Color.BLACK);
             Graphics2D g2 = (Graphics2D) g;
             
-            String winnerPic = (dir + "\\TTRAssets\\" + ranked[0].ID + ".gif");
+            
+            String winnerPic = (dir + "\\TTRAssets\\players\\" + (ranked[0].ID + 1) + ".png");
             Image winPic = new ImageIcon(winnerPic).getImage();
-            g.drawImage(winPic, 498, 247, this);
-            /*
+            g.drawImage(winPic, 498, 246, this);
+            
+            
             for(int i = 0; i<numPlayers; i++){
-            g.drawString("Player " + Integer.toString(ranked[i].ID), 314, (297 + (i * 20)));
-            g.drawString(Integer.toString(ranked[i].myScore), 709, (297 + (i * 20)));
+                 g.setColor(Color.WHITE);
+                if (ranked[i] != null)   {
+                   
+            g.drawString("Player " + Integer.toString(ranked[i].ID + 1), 334, (310 + (i * 80)));
+            g.drawString(Integer.toString(ranked[i].myScore), 709, (310 + (i * 80)));
             }
-            */
+            }
+            
+            //for (int i = 0; i<ranked.length; i++){
+            //if (ranked[i] != null)    
+            //g.drawString(Integer.toString(ranked[i].ID),10,10 + (10 * i));
+            //}
+            
 
         }
     }
@@ -1871,12 +1893,15 @@ public class CoffeeSucks extends JPanel implements ActionListener, MouseListener
         for (Ticket curr : currentTix) {
 
             if (curr.mask.contains(p)) {
-
+                rolledTowns.clear();
                 if (curr.myValue < 12) {
                     rolled = Color.BLUE;
                 } else {
                     rolled = Color.BLACK;
                 }
+                
+                rolledTowns.add(curr.start);
+                rolledTowns.add(curr.dest);
 
                 rollover1 = Integer.toString(curr.myValue) + " point card";
                 rollover2 = curr.start.townName + " to";
@@ -1997,7 +2022,7 @@ public class CoffeeSucks extends JPanel implements ActionListener, MouseListener
             if (curr.mask.contains(p)) {
                 //if (curr.visible) {
                 
-                if((canEnd) || (myPlayers[currentPlayer-1].numTrains < 5)){
+                if((canEnd) /*|| (myPlayers[currentPlayer-1].numTrains < 5)*/){
                     if (((Button) curr).myID == "m8") {
                             playSound(snd_blip, false);
                             
@@ -2569,6 +2594,8 @@ public class CoffeeSucks extends JPanel implements ActionListener, MouseListener
 
     public void endTurn() {
         
+        stepping = false;
+        
         if(!finalRound)
          if (myPlayers[currentPlayer-1].numTrains < 3){
             finalRound = true;
@@ -2582,7 +2609,9 @@ public class CoffeeSucks extends JPanel implements ActionListener, MouseListener
                 currentFrame.setVisible(false);
                 mainObj.results();  
             }
+            else{
             playSound(snd_final,false);
+            }
         }
         
         test2 = "";
@@ -2604,15 +2633,18 @@ public class CoffeeSucks extends JPanel implements ActionListener, MouseListener
 
         if (turn == 0) {
             startHandSize = 4;
-        }
+        } 
         
-        if (!hasChecked)
+        //stepping = false;
+        //if (!hasChecked)
         for (int i = 0; i<myPlayers[currentPlayer - 1].myTix.size(); i++) {
-            debugCount = i;
+            //debugCount = i;
             if(checkTick(myPlayers[currentPlayer - 1].myTix.get(i).start, myPlayers[currentPlayer - 1].myTix.get(i).dest, myPlayers[currentPlayer - 1].myTix.get(i)))
             i = 0;
+            checkedTowns.clear();
         }
-        hasChecked = true;
+        //hasChecked = true;
+       // stepping = true;
         
         myPlayers[currentPlayer - 1].myHand = currentHand;
         cardsTaken = 0;
@@ -2658,7 +2690,8 @@ public class CoffeeSucks extends JPanel implements ActionListener, MouseListener
             currentHand.add(new Card(1130, 605, deck.get(0), "hand", hand[colorID(deck.get(0))], 675));
             deck.remove(0);
             startHandSize = 4;
-        } else {
+        } 
+        else {
             tixNeedToTake = 0;
             tixNeedToKeep = 0;
 
@@ -2672,6 +2705,12 @@ public class CoffeeSucks extends JPanel implements ActionListener, MouseListener
          
         if (finalRound)
             lastPlayer++;
+        
+        stepping = true;
+        
+        rolledTowns.clear();
+        
+        test2 = "finsh" + test2;
         
     }
     
@@ -2753,6 +2792,7 @@ public class CoffeeSucks extends JPanel implements ActionListener, MouseListener
             currentHand.get(i).y = currentHand.get(i).y;
             currentHand.get(i).inTransit = false;
             currentHand.get(i).hspeed = 0;
+            currentHand.get(i).vspeed = 0;
         }
     }
 
@@ -2994,15 +3034,16 @@ public class CoffeeSucks extends JPanel implements ActionListener, MouseListener
     }
 
     public boolean checkTick(Town s, Town e, Ticket t) {
-        stepping = false;
-        //test2 += s.townName + " " + e.townName;
+        //stepping = false;
+        System.out.println(s.townName + " " + e.townName);
         //boolean safe = false;
         
         for (int i = 0; i < s.paths.size(); i++) {
+            System.out.println(i);
             if (s == e) {
                 playSound(snd_route, false);
                 myPlayers[currentPlayer-1].numTravel++;
-                checkedTowns.clear();
+                //checkedTowns.clear();
                 myPlayers[currentPlayer - 1].myScore += t.myValue;
                 
                 for (int j = 0; j < myPlayers[currentPlayer - 1].myTix.size(); j++) {
@@ -3013,24 +3054,22 @@ public class CoffeeSucks extends JPanel implements ActionListener, MouseListener
                 }
                 
                 playSound(snd_route, false); 
-                stepping = true;
+               // stepping = true;
                 return true; //if we have reached our goal
 
             } 
             else if (currentPlayer == s.paths.get(i).myOwn) {
                 for (Town curr : townList) {
-                    //safe = true;
-                    //test2 += safe;
-                    if ((!checkedTowns.contains(s)) && (curr != s) && (curr.paths.contains(s.paths.get(i)))) {
-                        checkedTowns.add(s);
+                    if ((!checkedTowns.contains(s.paths.get(i))) && (curr != s) && (curr.paths.contains(s.paths.get(i)))) {
+                        checkedTowns.add(s.paths.get(i));
                         checkTick(curr, e, t);
                     }
                 } 
 
             }
         }
-        checkedTowns.clear();
-        stepping = true;
+        //checkedTowns.clear();
+        //stepping = true;
         return false;
     }
 
@@ -3217,23 +3256,27 @@ public class CoffeeSucks extends JPanel implements ActionListener, MouseListener
                 }        
             }
             
+            
             for (Player curr: myPlayers){
                 for (Ticket curr2: curr.myTix){
                     curr.myScore -= curr2.myValue; //REMOVE UNSUCCESSFUL CARDS
                 }
             }
-
+            //***************************************************************************FIX THIS!!!!!!!!!!!!!!! IF THIS HASNT BEEN REMOVED
+            
         
         //puts players in order by score
         Player[] pointRank = new Player[5];
         int p = 0;
         
         for(Player curr: myPlayers){
-        pointRank[p] = curr;    
+        pointRank[p] = curr;   
+        p++;
         }
         
         Player hold = null;
-        for(int i = 1; i<5; i++){
+        
+        for(int i = 1; i<numPlayers; i++){
             if (pointRank[i] != null)
             if (pointRank[i].myScore > pointRank[i-1].myScore){
                 hold = pointRank[i-1];
