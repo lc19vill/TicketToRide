@@ -301,11 +301,11 @@ public class AnimatedTrain extends GameObject {
         }
         if (ID == 66) {
             x = 423;
-            y = 366;
+            y = 368;
         }
         if (ID == 67) {
-            x = 418;
-            y = 362;
+            x = 430;
+            y = 365;
         }
         if (ID == 68) {
             x = 403;

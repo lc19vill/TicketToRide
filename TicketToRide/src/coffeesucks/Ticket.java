@@ -18,11 +18,17 @@ import javax.swing.ImageIcon;
 public class Ticket extends GameObject{
    Image s_card;
    String myState;
-   String myValue; // "short" or "long"
+   int myValue; // "short" or "long"
    int myID;
-
+   Town start;
+   Town dest;
     
-    public Ticket(int myX,int myY, int ID,String val,String state,int destinationX,int destinationY){ // TASK 2
+   String pathB = (dir + "\\TTRAssets\\tickets\\deckBlue.png"); 
+   Image blueInDeck = new ImageIcon(pathB).getImage();
+   String pathO = (dir + "\\TTRAssets\\tickets\\deckOrange.png");
+   Image orangeInDeck = new ImageIcon(pathO).getImage();
+   
+    public Ticket(int myX,int myY, int ID,int val,String state,int destinationX,int destinationY, Town s, Town d){ // TASK 2
         String path= (dir + "\\TTRAssets\\tickets\\card_" + ID + ".jpg"); 
         //this is how we name 'em, just rename the card that matches the ID to "card_X.jpg" where X is the ID
         // NAME ALL THE GREEN CARDS FIRST, THEN NAME THE ORANGE CARDS. THIS WAY WE CAN EASILY SET ALL THE VALUES
@@ -30,17 +36,29 @@ public class Ticket extends GameObject{
         sprite_index = s_card;
         x= myX;
         y= myY;
-        hitboxHeight = 474;
-        hitboxWidth = 283;
+        hitboxHeight = 124;
+        hitboxWidth = 75;
        mask =  new Rectangle2D.Double(x,y,hitboxWidth,hitboxHeight);
        moveTowardsPoint(destinationX,destinationY,10);
        myState = state;
        Solid = false;
        myID = ID;
        myValue = val;
+       start = s;
+       dest = d;
+       
+       if (state == "hand"){
+           if (myValue <= 11){
+               sprite_index = blueInDeck;
+           }
+           else
+               sprite_index = orangeInDeck;
+           hitboxHeight = 48;
+        hitboxWidth = 76;
+       }
        
     }
-    public Ticket(int myX,int myY, int ID,String val,String state){ // TASK 2
+    public Ticket(int myX,int myY, int ID,int val,String state,Town s, Town d){ // TASK 2
         String path= (dir + "\\TTRAssets\\tickets\\card_" + ID + ".jpg"); 
         //this is how we name 'em, just rename the card that matches the ID to "card_X.jpg" where X is the ID
         // NAME ALL THE GREEN CARDS FIRST, THEN NAME THE ORANGE CARDS. THIS WAY WE CAN EASILY SET ALL THE VALUES
@@ -48,13 +66,23 @@ public class Ticket extends GameObject{
         sprite_index = s_card;
         x= myX;
         y= myY;
-        hitboxHeight = 474;
-        hitboxWidth = 283;
+        hitboxHeight = 124;
+        hitboxWidth = 75;
        mask =  new Rectangle2D.Double(x,y,hitboxWidth,hitboxHeight);
        myState = state;
        Solid = false;
        myID = ID;
        myValue = val;
+       start = s;
+       dest = d;
+       
+       if (state == "hand"){
+           if (myValue <= 11){
+               sprite_index = blueInDeck;
+           }
+           else
+               sprite_index = orangeInDeck;
+       }
        
     }
     

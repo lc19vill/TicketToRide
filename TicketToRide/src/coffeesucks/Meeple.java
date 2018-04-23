@@ -11,4 +11,10 @@ package coffeesucks;
  */
 public class Meeple {
     
+    String myColor;
+    
+    public Meeple(String c){
+        myColor = c;
+    }
+    
 }

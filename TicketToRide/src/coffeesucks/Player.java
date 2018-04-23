@@ -14,9 +14,12 @@ import java.util.ArrayList;
 public class Player {
     
     ArrayList<Card> myHand = new ArrayList<>();
+    ArrayList<Meeple> myMeeps = new ArrayList<>();
+    ArrayList<Ticket> myTix = new ArrayList<>();
     int ID;
-    int numTrains = 45;
+    int numTrains = 15;
     int myScore = 0;
+    int numTravel = 0;
 
     public Player(int myID){
         ID = myID;

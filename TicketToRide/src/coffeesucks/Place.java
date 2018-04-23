@@ -25,6 +25,10 @@ public class Place {
     int x;
     int y;
     
+    public Place(){
+        
+    }
+    
     public Place(int ID, ArrayList<RoadPath> p,int myX, int myY){
         
         myRoads = p;

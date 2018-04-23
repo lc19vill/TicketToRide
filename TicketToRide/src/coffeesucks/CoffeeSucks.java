@@ -49,12 +49,17 @@ public class CoffeeSucks extends JPanel implements ActionListener, MouseListener
     static CoffeeSucks mainObj;
     String snd_blip = (dir + "\\TTRAssets\\blip.wav");
     String snd_bgm = (dir + "\\TTRAssets\\bgm.wav");
+    String snd_bgm2 = (dir + "\\TTRAssets\\bgm2.wav");
     String snd_title = (dir + "\\TTRAssets\\title.wav");
     String snd_drawcard = (dir + "\\TTRAssets\\drawcard.wav");
     String snd_liftcard = (dir + "\\TTRAssets\\liftcard.wav");
     String snd_retractcard = (dir + "\\TTRAssets\\retractcard.wav");
+    String snd_ticksel = (dir + "\\TTRAssets\\ticksel.wav");
+    String snd_meep = (dir + "\\TTRAssets\\meep.wav");
     String snd_deck = (dir + "\\TTRAssets\\deck.wav");
     String snd_nope = (dir + "\\TTRAssets\\nope.wav");
+    String snd_final = (dir + "\\TTRAssets\\final.wav");
+    String snd_results = (dir + "\\TTRAssets\\results.wav");
     Image player_icon;
     ArrayList<String> deck = new ArrayList<>();
     ArrayList<Card> currentHand = new ArrayList<>();
@@ -62,13 +67,15 @@ public class CoffeeSucks extends JPanel implements ActionListener, MouseListener
     int[] dock = new int[6];
     int[] hand = new int[9];
     ArrayList<Card> dockedCards = new ArrayList<>();
-    ArrayList<Ticket> tickDeck = new ArrayList<>();
-    ArrayList<Place> places = new ArrayList<>();
+    ArrayList<Ticket> smallTickDeck = new ArrayList<>();
+    ArrayList<Ticket> largeTickDeck = new ArrayList<>();
+    //ArrayList<Place> places = new ArrayList<>();
     int debugTime = 0;
     int debugFrames = 0;
     ArrayList<Integer> currentPlayerOwns = new ArrayList<>();
     int startHandSize = 0;
     String snd_train = (dir + "\\TTRAssets\\train.wav");
+    String snd_route = (dir + "\\TTRAssets\\route.wav");
     String snd_money = (dir + "\\TTRAssets\\chaching.wav");
     String snd_begin = (dir + "\\TTRAssets\\epicgamestart.wav");
     int numPlayers = 2;
@@ -93,12 +100,63 @@ public class CoffeeSucks extends JPanel implements ActionListener, MouseListener
     JFrame gameFrame;
     String specialTest = "";
     String test2 = "";
+    ArrayList<Town> townList = new ArrayList<>();
+    ArrayList<Meeple> meepDeck = new ArrayList<>();
+    Point[] meepButt = new Point[9];
+    boolean meepTime = false;
+    ArrayList<Meeple> pathMeeps = new ArrayList<>();
+    ArrayList<Town> myGuys = new ArrayList<>();
+    int getMeeps = 0;
+    String butt1 = "";
+    String butt2 = "";
+    String butt3 = "";
+    String butt4 = "";
+    String butt5 = "";
+    String butt6 = "";
+    String butt7 = "";
+    String butt8 = "";
+    String blaMeep = (dir + "\\TTRAssets\\meeple\\blackmeep.png");
+    Image blackmeep = new ImageIcon(blaMeep).getImage();
+    String wMeep = (dir + "\\TTRAssets\\meeple\\whitemeep.png");
+    Image whitemeep = new ImageIcon(wMeep).getImage();
+    String yMeep = (dir + "\\TTRAssets\\meeple\\yellowmeep.png");
+    Image yellowmeep = new ImageIcon(yMeep).getImage();
+    String gMeep = (dir + "\\TTRAssets\\meeple\\greenmeep.png");
+    Image greenmeep = new ImageIcon(gMeep).getImage();
+    String rMeep = (dir + "\\TTRAssets\\meeple\\redmeep.png");
+    Image redmeep = new ImageIcon(rMeep).getImage();
+    String bluMeep = (dir + "\\TTRAssets\\meeple\\bluemeep.png");
+    Image bluemeep = new ImageIcon(bluMeep).getImage();
+    ArrayList<Button> meepButts = new ArrayList<>();
+    int p1Y = 0;
+    int p2Y = 0;
+    int p3Y = 0;
+    int p4Y = 0;
+    int p5Y = 0;
+    boolean hasFilled = false;
+    int tixInitalChoice = 0;
+    boolean tixMode = false;
+    ArrayList<Ticket> selectedTix = new ArrayList<>();
+    ArrayList<Ticket> currentTix = new ArrayList<>();
+    int tixNeedToTake = 4;
+    int tixFromPile = 0;
+    int tixNeedToKeep = 2;
+    Point[] tixPix = new Point[4];
+    ArrayList<RoadPath> checkedTowns = new ArrayList<>();
+    boolean finalRound = false;
+    int lastPlayer;
+    int tixPicked = 0;
+    boolean hasChecked = false;
+    boolean stepping = true;
+    boolean canEnd = false;
+    Player[] ranked;
+    ArrayList<Town> rolledTowns = new ArrayList<>();
 
     public CoffeeSucks() throws FontFormatException, IOException {
         //custom font stuff
         String fontpath = dir + "\\TTRAssets\\ttrFont.ttf";
         customFont = Font.createFont(Font.TRUETYPE_FONT, new File(fontpath)).deriveFont(12f);
-        bigFont = customFont.deriveFont(Font.BOLD, 24f);
+        bigFont = customFont.deriveFont(Font.BOLD, 16f);
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File(fontpath)));
         dock[0] = 115;
@@ -107,6 +165,11 @@ public class CoffeeSucks extends JPanel implements ActionListener, MouseListener
         dock[3] = 415;
         dock[4] = 515;
         dock[5] = 615;
+
+        tixPix[0] = new Point(853, 197);
+        tixPix[1] = new Point(996, 197);
+        tixPix[2] = new Point(853, 354);
+        tixPix[3] = new Point(996, 354);
 
         hand[0] = 204;
         hand[1] = 304;
@@ -152,40 +215,15 @@ public class CoffeeSucks extends JPanel implements ActionListener, MouseListener
         pSelectHeights[2] = 534;
         pSelectHeights[3] = 609;
 
-    }
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) throws FontFormatException, IOException {
-        CoffeeSucks game = new CoffeeSucks();
-        mainObj = game;
-        game.title();
-    }
-
-    public void beginnerRoom() {
-        JFrame lvlframe = new JFrame("Ticket To Ride - powered by CoffeeSucksEngine v1");
-        currentFrame = lvlframe;
-        currentRoom = "GameBoard";
-        lvlframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //what do we do on close?
-        lvlframe.add(this); //makes the paintComponent add
-        lvlframe.setResizable(false); //locks size
-        lvlframe.requestFocus();
-        lvlframe.toFront();
-        //frame.addKeyListener(p1); //every object with inputs needs this
-        lvlframe.addMouseListener(this);
-        lvlframe.addMouseMotionListener(this);
-        lvlframe.setSize(screenSize); //sets size
-        lvlframe.setVisible(true);
-        timer.start();
-
-        try {
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(snd_bgm).getAbsoluteFile());
-            bgm = AudioSystem.getClip();
-            bgm.open(audioInputStream);
-            bgm.loop(Clip.LOOP_CONTINUOUSLY);
-        } catch (Exception ex) {
-        }
+        meepButt[0] = new Point(862, 489);
+        meepButt[1] = new Point(924, 489);
+        meepButt[2] = new Point(983, 489);
+        meepButt[3] = new Point(1046, 489);
+        meepButt[4] = new Point(862, 552);
+        meepButt[5] = new Point(924, 552);
+        meepButt[6] = new Point(983, 552);
+        meepButt[7] = new Point(1046, 552);
+        meepButt[8] = new Point(1096,520);
 
         //time to create funtime tons of polyboys
         RoadPath rp1 = new RoadPath(515, 122, 525, 26, 557, 27, 530, 121, "Green", 5, 1);
@@ -320,7 +358,7 @@ public class CoffeeSucks extends JPanel implements ActionListener, MouseListener
         hitBoxes.add(rp65);
         RoadPath rp66 = new RoadPath(451, 386, 483, 410, 480, 416, 447, 393, "Gray", 2, 66);
         hitBoxes.add(rp66);
-        RoadPath rp67 = new RoadPath(451 + 8, 386 - 6, 483 + 8, 410 - 6, 480 + 8, 416 - 6, 447 + 8, 393 - 6, "Gray", 2, 67);
+        RoadPath rp67 = new RoadPath(451 + 8, 386 - 8, 483 + 8, 410 - 6, 480 + 8, 416 - 6, 447 + 8, 393 - 6, "Gray", 2, 67);
         hitBoxes.add(rp67);
         RoadPath rp68 = new RoadPath(434, 390, 442, 388, 431, 450, 424, 448, "Gray", 3, 68);
         hitBoxes.add(rp68);
@@ -350,7 +388,7 @@ public class CoffeeSucks extends JPanel implements ActionListener, MouseListener
         hitBoxes.add(rp80);
         RoadPath rp81 = new RoadPath(526, 384, 557, 313, 564, 312, 558, 360, "Blue", 4, 81);
         hitBoxes.add(rp81); //iffy hitboxes
-        RoadPath rp82 = new RoadPath(530, 385, 556, 351, 569, 316, 584, 376, "Yellow", 4, 82);
+        RoadPath rp82 = new RoadPath(530, 385, 556, 351, 569, 316, 584, 376, "White", 4, 82);
         hitBoxes.add(rp82); //iffy hitboxes
         RoadPath rp83 = new RoadPath(580, 312, 630, 333, 592, 358, 574, 316, "Gray", 3, 83);
         hitBoxes.add(rp83);
@@ -408,32 +446,564 @@ public class CoffeeSucks extends JPanel implements ActionListener, MouseListener
         hitBoxes.add(rp109);
         RoadPath rp110 = new RoadPath(525, 140, 526, 160, 532, 160, 531, 140, "White", 1, 110);
         hitBoxes.add(rp110);
+
+        townList.add(new Town("Dantmark", 558, 15));
+        townList.get(0).addPath(rp1);
+        townList.get(0).addPath(rp5);
+        townList.add(new Town("Kiel", 581, 65));
+        townList.get(1).addPath(rp5);
+        townList.get(1).addPath(rp8);
+        townList.get(1).addPath(rp7);
+        townList.get(1).addPath(rp4);
+        townList.get(1).addPath(rp6);
+        townList.get(1).addPath(rp2);
+        townList.add(new Town("Rostock", 684, 69));
+        townList.get(2).addPath(rp8);
+        townList.get(2).addPath(rp9);
+        townList.get(2).addPath(rp11);
+        townList.add(new Town("Schwerin", 648, 117));
+        townList.get(3).addPath(rp9);
+        townList.get(3).addPath(rp12);
+        townList.get(3).addPath(rp7);
+        townList.get(3).addPath(rp10);
+        townList.add(new Town("Hamburg", 593, 124));
+        townList.get(4).addPath(rp4);
+        townList.get(4).addPath(rp6);
+        townList.get(4).addPath(rp10);
+        townList.get(4).addPath(rp3);
+        townList.get(4).addPath(rp13);
+        townList.get(4).addPath(rp14);
+        townList.get(4).addPath(rp39);
+        townList.get(4).addPath(rp41);
+        townList.get(4).addPath(rp40);
+        townList.add(new Town("Bremerhaven", 517, 124));
+        townList.get(5).addPath(rp1);
+        townList.get(5).addPath(rp2);
+        townList.get(5).addPath(rp3);
+        townList.get(5).addPath(rp45);
+        townList.get(5).addPath(rp110);
+        townList.add(new Town("Bremen", 522, 164));
+        townList.get(6).addPath(rp41);
+        townList.get(6).addPath(rp44);
+        townList.get(6).addPath(rp42);
+        townList.get(6).addPath(rp43);
+        townList.get(6).addPath(rp110);
+        townList.add(new Town("Emden", 444, 135));
+        townList.get(7).addPath(rp45);
+        townList.get(7).addPath(rp44);
+        townList.get(7).addPath(rp46);
+        townList.get(7).addPath(rp47);
+        townList.add(new Town("Munster", 473, 236));
+        townList.get(8).addPath(rp43);
+        townList.get(8).addPath(rp47);
+        townList.get(8).addPath(rp48);
+        townList.get(8).addPath(rp51);
+        townList.get(8).addPath(rp50);
+        townList.get(8).addPath(rp49);
+        townList.add(new Town("Hannover", 569, 222));
+        townList.get(9).addPath(rp40);
+        townList.get(9).addPath(rp39);
+        townList.get(9).addPath(rp15);
+        townList.get(9).addPath(rp16);
+        townList.get(9).addPath(rp37);
+        townList.get(9).addPath(rp38);
+        townList.get(9).addPath(rp61);
+        townList.get(9).addPath(rp60);
+        townList.get(9).addPath(rp49);
+        townList.get(9).addPath(rp42);
+        townList.add(new Town("Berlin", 743, 202));
+        townList.get(10).addPath(rp11);
+        townList.get(10).addPath(rp12);
+        townList.get(10).addPath(rp13);
+        townList.get(10).addPath(rp14);
+        townList.get(10).addPath(rp15);
+        townList.get(10).addPath(rp17);
+        townList.get(10).addPath(rp18);
+        townList.get(10).addPath(rp19);
+        townList.add(new Town("Dortmund", 463, 275));
+        townList.get(11).addPath(rp50);
+        townList.get(11).addPath(rp51);
+        townList.get(11).addPath(rp59);
+        townList.get(11).addPath(rp53);
+        townList.get(11).addPath(rp54);
+        townList.get(11).addPath(rp55);
+        townList.add(new Town("Kassel", 560, 301));
+        townList.get(12).addPath(rp61);
+        townList.get(12).addPath(rp60);
+        townList.get(12).addPath(rp59);
+        townList.get(12).addPath(rp81);
+        townList.get(12).addPath(rp82);
+        townList.get(12).addPath(rp83);
+        townList.add(new Town("Erfurt", 633, 328));
+        townList.get(13).addPath(rp38);
+        townList.get(13).addPath(rp37);
+        townList.get(13).addPath(rp26);
+        townList.get(13).addPath(rp23);
+        townList.get(13).addPath(rp28);
+        townList.get(13).addPath(rp35);
+        townList.get(13).addPath(rp36);
+        townList.get(13).addPath(rp83);
+        townList.add(new Town("Leipzig", 696, 291));
+        townList.get(14).addPath(rp24);
+        townList.get(14).addPath(rp19);
+        townList.get(14).addPath(rp26);
+        townList.get(14).addPath(rp25);
+        townList.get(14).addPath(rp21);
+        townList.add(new Town("Magdeburg", 670, 237));
+        townList.get(15).addPath(rp17);
+        townList.get(15).addPath(rp16);
+        townList.get(15).addPath(rp24);
+        townList.add(new Town("Dresden", 770, 318));
+        townList.get(16).addPath(rp18);
+        townList.get(16).addPath(rp21);
+        townList.get(16).addPath(rp22);
+        townList.get(16).addPath(rp20);
+        townList.add(new Town("Dusseldorf", 427, 292));
+        townList.get(17).addPath(rp52);
+        townList.get(17).addPath(rp53);
+        townList.get(17).addPath(rp54);
+        townList.get(17).addPath(rp55);
+        townList.get(17).addPath(rp56);
+        townList.get(17).addPath(rp57);
+        townList.get(17).addPath(rp58);
+        townList.add(new Town("Koln", 427, 334));
+        townList.get(18).addPath(rp62);
+        townList.get(18).addPath(rp63);
+        townList.get(18).addPath(rp65);
+        townList.get(18).addPath(rp64);
+        townList.get(18).addPath(rp56);
+        townList.get(18).addPath(rp57);
+        townList.get(18).addPath(rp58);
+        townList.add(new Town("Koblenz", 434, 375));
+        townList.get(19).addPath(rp64);
+        townList.get(19).addPath(rp65);
+        townList.get(19).addPath(rp68);
+        townList.get(19).addPath(rp66);
+        townList.get(19).addPath(rp67);
+        townList.add(new Town("Mannheim", 500, 445));
+        townList.get(20).addPath(rp89);
+        townList.get(20).addPath(rp90);
+        townList.get(20).addPath(rp79);
+        townList.get(20).addPath(rp70);
+        townList.get(20).addPath(rp76);
+        townList.get(20).addPath(rp77);
+        townList.get(20).addPath(rp78);
+        townList.get(20).addPath(rp80);
+        townList.add(new Town("Stuffgart", 539, 492));
+        townList.get(21).addPath(rp89);
+        townList.get(21).addPath(rp90);
+        townList.get(21).addPath(rp88);
+        townList.get(21).addPath(rp104);
+        townList.get(21).addPath(rp106);
+        townList.get(21).addPath(rp92);
+        townList.get(21).addPath(rp91);
+        townList.add(new Town("Ulm", 586, 524));
+        townList.get(22).addPath(rp91);
+        townList.get(22).addPath(rp92);
+        townList.get(22).addPath(rp93);
+        townList.get(22).addPath(rp94);
+        townList.get(22).addPath(rp103);
+        townList.add(new Town("Frankfurt", 515, 389));
+        townList.get(23).addPath(rp81);
+        townList.get(23).addPath(rp82);
+        townList.get(23).addPath(rp84);
+        townList.get(23).addPath(rp85);
+        townList.get(23).addPath(rp79);
+        townList.get(23).addPath(rp78);
+        townList.get(23).addPath(rp62);
+        townList.get(23).addPath(rp63);
+        townList.get(23).addPath(rp73);
+        townList.get(23).addPath(rp74);
+        townList.add(new Town("Mainz", 483, 408));
+        townList.get(24).addPath(rp73);
+        townList.get(24).addPath(rp74);
+        townList.get(24).addPath(rp77);
+        townList.get(24).addPath(rp76);
+        townList.get(24).addPath(rp69);
+        townList.get(24).addPath(rp66);
+        //townList.get(24).addPath(rp63);
+        //townList.get(24).addPath(rp62);
+        townList.get(24).addPath(rp67);
+        townList.add(new Town("Nurnberg", 633, 427));
+        townList.get(25).addPath(rp36);
+        townList.get(25).addPath(rp35);
+        townList.get(25).addPath(rp34);
+        townList.get(25).addPath(rp32);
+        townList.get(25).addPath(rp33);
+        townList.get(25).addPath(rp95);
+        townList.get(25).addPath(rp87);
+        townList.get(25).addPath(rp86);
+        townList.add(new Town("Chemnitz", 735, 334));
+        townList.get(26).addPath(rp22);
+        townList.get(26).addPath(rp25);
+        townList.get(26).addPath(rp23);
+        townList.get(26).addPath(rp27);
+        townList.add(new Town("Regensburg", 709, 471));
+        townList.get(27).addPath(rp28);
+        townList.get(27).addPath(rp27);
+        townList.get(27).addPath(rp20);
+        townList.get(27).addPath(rp29);
+        townList.get(27).addPath(rp30);
+        townList.get(27).addPath(rp34);
+        townList.add(new Town("Augburg", 623, 526));
+        townList.get(28).addPath(rp95);
+        townList.get(28).addPath(rp93);
+        townList.get(28).addPath(rp94);
+        townList.get(28).addPath(rp97);
+        townList.get(28).addPath(rp96);
+        townList.add(new Town("Munchen", 680, 540));
+        townList.get(29).addPath(rp33);
+        townList.get(29).addPath(rp32);
+        townList.get(29).addPath(rp30);
+        townList.get(29).addPath(rp31);
+        townList.get(29).addPath(rp98);
+        townList.get(29).addPath(rp97);
+        townList.get(29).addPath(rp96);
+        townList.add(new Town("Konstanz", 534, 572));
+        townList.get(30).addPath(rp104);
+        townList.get(30).addPath(rp101);
+        townList.get(30).addPath(rp105);
+        townList.get(30).addPath(rp102);
+        townList.add(new Town("Saarbrucken", 419, 456));
+        townList.get(31).addPath(rp68);
+        townList.get(31).addPath(rp69);
+        townList.get(31).addPath(rp70);
+        townList.get(31).addPath(rp71);
+        townList.get(31).addPath(rp72);
+        townList.add(new Town("Karlsruhe", 497, 482));
+        townList.get(32).addPath(rp71);
+        townList.get(32).addPath(rp75);
+        townList.get(32).addPath(rp107);
+        townList.get(32).addPath(rp88);
+        townList.get(32).addPath(rp80);
+        townList.add(new Town("Freiburg", 474, 557));
+        townList.get(33).addPath(rp108);
+        townList.get(33).addPath(rp107);
+        townList.get(33).addPath(rp106);
+        townList.get(33).addPath(rp105);
+        townList.get(33).addPath(rp109);
+        townList.add(new Town("Lindau", 572, 582));
+        townList.get(34).addPath(rp103);
+        townList.get(34).addPath(rp102);
+        townList.get(34).addPath(rp100);
+        townList.get(34).addPath(rp99);
+        townList.get(34).addPath(rp98);
+        townList.add(new Town("Warzburg", 575, 406));
+        townList.get(35).addPath(rp84);
+        townList.get(35).addPath(rp85);
+        townList.get(35).addPath(rp86);
+        townList.get(35).addPath(rp87);
+        townList.add(new Town("Franbreich", 420, 515));
+        townList.get(36).addPath(rp72);
+        townList.get(36).addPath(rp75);
+        townList.get(36).addPath(rp108);
+        townList.add(new Town("Osterreich", 757, 573));
+        townList.get(37).addPath(rp29);
+        townList.get(37).addPath(rp31);
+        townList.add(new Town("Osterreich", 631, 600));
+        townList.get(38).addPath(rp99);
+        townList.add(new Town("Schweiz", 494, 602));
+        townList.get(39).addPath(rp109);
+        townList.get(39).addPath(rp101);
+        townList.get(39).addPath(rp100);
+        townList.add(new Town("Niedeclande", 408, 198));
+        townList.get(40).addPath(rp46);
+        townList.get(40).addPath(rp48);
+        townList.get(40).addPath(rp52);
+
+        smallTickDeck.add(new Ticket(0, 0, 1, 2, "deck", townList.get(19), townList.get(21)));
+        smallTickDeck.add(new Ticket(0, 0, 2, 3, "deck", townList.get(24), townList.get(21)));
+        smallTickDeck.add(new Ticket(0, 0, 3, 4, "deck", townList.get(23), townList.get(21)));
+        smallTickDeck.add(new Ticket(0, 0, 4, 4, "deck", townList.get(4), townList.get(2)));
+        smallTickDeck.add(new Ticket(0, 0, 5, 4, "deck", townList.get(32), townList.get(28)));
+        smallTickDeck.add(new Ticket(0, 0, 6, 4, "deck", townList.get(18), townList.get(23)));
+        smallTickDeck.add(new Ticket(0, 0, 7, 4, "deck", townList.get(18), townList.get(32)));
+        smallTickDeck.add(new Ticket(0, 0, 8, 4, "deck", townList.get(20), townList.get(35)));
+        smallTickDeck.add(new Ticket(0, 0, 9, 4, "deck", townList.get(10), townList.get(14)));
+        smallTickDeck.add(new Ticket(0, 0, 10, 5, "deck", townList.get(29), townList.get(21)));
+        smallTickDeck.add(new Ticket(0, 0, 11, 5, "deck", townList.get(6), townList.get(18)));
+        smallTickDeck.add(new Ticket(0, 0, 12, 6, "deck", townList.get(29), townList.get(30)));
+        smallTickDeck.add(new Ticket(0, 0, 13, 6, "deck", townList.get(11), townList.get(20)));
+        smallTickDeck.add(new Ticket(0, 0, 14, 6, "deck", townList.get(13), townList.get(35)));
+        smallTickDeck.add(new Ticket(0, 0, 15, 6, "deck", townList.get(10), townList.get(26)));
+        smallTickDeck.add(new Ticket(0, 0, 16, 6, "deck", townList.get(6), townList.get(12)));
+        smallTickDeck.add(new Ticket(0, 0, 17, 6, "deck", townList.get(7), townList.get(4)));
+        smallTickDeck.add(new Ticket(0, 0, 18, 6, "deck", townList.get(9), townList.get(14)));
+        smallTickDeck.add(new Ticket(0, 0, 19, 7, "deck", townList.get(5), townList.get(18)));
+        smallTickDeck.add(new Ticket(0, 0, 20, 7, "deck", townList.get(4), townList.get(10)));
+        smallTickDeck.add(new Ticket(0, 0, 21, 7, "deck", townList.get(10), townList.get(13)));
+        smallTickDeck.add(new Ticket(0, 0, 22, 7, "deck", townList.get(4), townList.get(12)));
+        smallTickDeck.add(new Ticket(0, 0, 23, 7, "deck", townList.get(9), townList.get(23)));
+        smallTickDeck.add(new Ticket(0, 0, 24, 7, "deck", townList.get(19), townList.get(22)));
+        smallTickDeck.add(new Ticket(0, 0, 25, 7, "deck", townList.get(14), townList.get(25)));
+        smallTickDeck.add(new Ticket(0, 0, 26, 7, "deck", townList.get(29), townList.get(35)));
+        smallTickDeck.add(new Ticket(0, 0, 27, 7, "deck", townList.get(25), townList.get(21)));
+        smallTickDeck.add(new Ticket(0, 0, 28, 7, "deck", townList.get(11), townList.get(13)));
+        smallTickDeck.add(new Ticket(0, 0, 29, 8, "deck", townList.get(36), townList.get(29)));
+        smallTickDeck.add(new Ticket(0, 0, 30, 8, "deck", townList.get(29), townList.get(33)));
+        smallTickDeck.add(new Ticket(0, 0, 31, 8, "deck", townList.get(40), townList.get(23)));
+        smallTickDeck.add(new Ticket(0, 0, 32, 8, "deck", townList.get(18), townList.get(25)));
+        smallTickDeck.add(new Ticket(0, 0, 33, 8, "deck", townList.get(23), townList.get(34)));
+        smallTickDeck.add(new Ticket(0, 0, 34, 9, "deck", townList.get(11), townList.get(15)));
+        smallTickDeck.add(new Ticket(0, 0, 35, 9, "deck", townList.get(24), townList.get(29)));
+        smallTickDeck.add(new Ticket(0, 0, 36, 9, "deck", townList.get(4), townList.get(18)));
+        smallTickDeck.add(new Ticket(0, 0, 37, 9, "deck", townList.get(32), townList.get(27)));
+        smallTickDeck.add(new Ticket(0, 0, 38, 9, "deck", townList.get(8), townList.get(21)));
+        smallTickDeck.add(new Ticket(0, 0, 39, 9, "deck", townList.get(40), townList.get(32)));
+        smallTickDeck.add(new Ticket(0, 0, 40, 10, "deck", townList.get(0), townList.get(10)));
+        smallTickDeck.add(new Ticket(0, 0, 41, 10, "deck", townList.get(0), townList.get(40)));
+        smallTickDeck.add(new Ticket(0, 0, 42, 10, "deck", townList.get(17), townList.get(30)));
+        smallTickDeck.add(new Ticket(0, 0, 43, 10, "deck", townList.get(12), townList.get(33)));
+        smallTickDeck.add(new Ticket(0, 0, 44, 10, "deck", townList.get(18), townList.get(39)));
+        smallTickDeck.add(new Ticket(0, 0, 45, 10, "deck", townList.get(14), townList.get(23)));
+        smallTickDeck.add(new Ticket(0, 0, 46, 10, "deck", townList.get(4), townList.get(14)));
+        smallTickDeck.add(new Ticket(0, 0, 47, 10, "deck", townList.get(23), townList.get(37))); //|| townList.get(38)));
+        smallTickDeck.add(new Ticket(0, 0, 48, 10, "deck", townList.get(4), townList.get(19)));
+        smallTickDeck.add(new Ticket(0, 0, 49, 10, "deck", townList.get(6), townList.get(10)));
+        smallTickDeck.add(new Ticket(0, 0, 50, 11, "deck", townList.get(15), townList.get(18)));
+        smallTickDeck.add(new Ticket(0, 0, 51, 11, "deck", townList.get(4), townList.get(23)));
+        smallTickDeck.add(new Ticket(0, 0, 52, 11, "deck", townList.get(10), townList.get(31)));
+        smallTickDeck.add(new Ticket(0, 0, 53, 11, "deck", townList.get(18), townList.get(27)));
+        smallTickDeck.add(new Ticket(0, 0, 54, 11, "deck", townList.get(14), townList.get(29)));
+        smallTickDeck.add(new Ticket(0, 0, 55, 11, "deck", townList.get(18), townList.get(29)));
+
+        largeTickDeck.add(new Ticket(0, 0, 56, 12, "deck", townList.get(16), townList.get(28)));
+        largeTickDeck.add(new Ticket(0, 0, 57, 12, "deck", townList.get(14), townList.get(22)));
+        largeTickDeck.add(new Ticket(0, 0, 58, 12, "deck", townList.get(18), townList.get(14)));
+        largeTickDeck.add(new Ticket(0, 0, 59, 12, "deck", townList.get(3), townList.get(19)));
+        largeTickDeck.add(new Ticket(0, 0, 60, 12, "deck", townList.get(4), townList.get(16)));
+        largeTickDeck.add(new Ticket(0, 0, 61, 12, "deck", townList.get(5), townList.get(36)));
+        largeTickDeck.add(new Ticket(0, 0, 62, 13, "deck", townList.get(11), townList.get(29)));
+        largeTickDeck.add(new Ticket(0, 0, 63, 13, "deck", townList.get(3), townList.get(23)));
+        largeTickDeck.add(new Ticket(0, 0, 64, 13, "deck", townList.get(40), townList.get(10)));
+        largeTickDeck.add(new Ticket(0, 0, 65, 13, "deck", townList.get(10), townList.get(17)));
+        largeTickDeck.add(new Ticket(0, 0, 66, 14, "deck", townList.get(10), townList.get(23)));
+        largeTickDeck.add(new Ticket(0, 0, 67, 14, "deck", townList.get(10), townList.get(18)));
+        largeTickDeck.add(new Ticket(0, 0, 68, 14, "deck", townList.get(4), townList.get(32)));
+        largeTickDeck.add(new Ticket(0, 0, 69, 14, "deck", townList.get(14), townList.get(29)));
+        largeTickDeck.add(new Ticket(0, 0, 70, 14, "deck", townList.get(8), townList.get(29)));
+        largeTickDeck.add(new Ticket(0, 0, 71, 15, "deck", townList.get(7), townList.get(33)));
+        largeTickDeck.add(new Ticket(0, 0, 72, 15, "deck", townList.get(1), townList.get(25)));
+        largeTickDeck.add(new Ticket(0, 0, 73, 15, "deck", townList.get(4), townList.get(21)));
+        largeTickDeck.add(new Ticket(0, 0, 74, 15, "deck", townList.get(36), townList.get(14)));
+        largeTickDeck.add(new Ticket(0, 0, 75, 15, "deck", townList.get(8), townList.get(37))); //|| townList.get(38)));
+        largeTickDeck.add(new Ticket(0, 0, 76, 15, "deck", townList.get(10), townList.get(29)));
+        largeTickDeck.add(new Ticket(0, 0, 77, 15, "deck", townList.get(10), townList.get(24)));
+        largeTickDeck.add(new Ticket(0, 0, 78, 16, "deck", townList.get(5), townList.get(27)));
+        largeTickDeck.add(new Ticket(0, 0, 79, 16, "deck", townList.get(16), townList.get(31)));
+        largeTickDeck.add(new Ticket(0, 0, 80, 17, "deck", townList.get(1), townList.get(21)));
+        largeTickDeck.add(new Ticket(0, 0, 81, 17, "deck", townList.get(36), townList.get(1)));
+        largeTickDeck.add(new Ticket(0, 0, 82, 18, "deck", townList.get(4), townList.get(29)));
+        largeTickDeck.add(new Ticket(0, 0, 83, 18, "deck", townList.get(10), townList.get(21)));
+        largeTickDeck.add(new Ticket(0, 0, 84, 19, "deck", townList.get(7), townList.get(37)));// || townList.get(38)));
+        largeTickDeck.add(new Ticket(0, 0, 85, 20, "deck", townList.get(10), townList.get(39)));
+        largeTickDeck.add(new Ticket(0, 0, 86, 20, "deck", townList.get(1), townList.get(39)));
+        largeTickDeck.add(new Ticket(0, 0, 87, 22, "deck", townList.get(0), townList.get(34)));
+        largeTickDeck.add(new Ticket(0, 0, 88, 22, "deck", townList.get(2), townList.get(30)));
+        largeTickDeck.add(new Ticket(0, 0, 89, 22, "deck", townList.get(2), townList.get(37))); //|| townList.get(38)));
+
+    }
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) throws FontFormatException, IOException {
+        CoffeeSucks game = new CoffeeSucks();
+        mainObj = game;
+        game.title();
+    }
+
+    public void beginnerRoom() {
+        JFrame lvlframe = new JFrame("Ticket To Ride - powered by CoffeeSucksEngine v1");
+        currentFrame = lvlframe;
+        currentRoom = "GameBoard";
+        lvlframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //what do we do on close?
+        lvlframe.add(this); //makes the paintComponent add
+        lvlframe.setResizable(false); //locks size
+        lvlframe.requestFocus();
+        lvlframe.toFront();
+        //frame.addKeyListener(p1); //every object with inputs needs this
+        lvlframe.addMouseListener(this);
+        lvlframe.addMouseMotionListener(this);
+        lvlframe.setSize(screenSize); //sets size
+        lvlframe.setVisible(true);
+        timer.start();
         
-        //***********************************CURRENT WORK ZONE************************************
-        //Task 1 - Creating the Areas
-        //For now, just enter 0,0 for the x and y, I can do those later 
-        //Check the "NAMING ASSIST" folder to see what labels I'd like to give them 
-        //(if you can't read it, just do whatever)
-        //TEMPLATE FOR THE FIRST PLACE
-        ArrayList<RoadPath> L1Path = new ArrayList<>(); //initalize an arraylist for the locations
-        L1Path.add(rp2); //add all the path objects, they are named rp__ with the __ being the number, p simple
-        L1Path.add(rp4);
-        L1Path.add(rp6);
-        L1Path.add(rp7);
-        L1Path.add(rp8);
-        L1Path.add(rp5);
-        places.add(new Place(1,L1Path,0,0)); //add a new place to the places array, (IDNUMBER,Array,x,y)
         
         
-        
-        for (int i = 0; i<55; i++){
-        tickDeck.add(new Ticket(0,0,i,"short","deck"));    
+        String curBgm = "";
+        Random r2 = new Random();
+        if (r2.nextInt(5) == 1) {
+            curBgm = snd_bgm2;
+        } else {
+            curBgm = snd_bgm;
         }
-        for (int i = 55; i<90; i++){
-        tickDeck.add(new Ticket(0,0,i,"long","deck"));    
+        try {
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(curBgm).getAbsoluteFile());
+            bgm = AudioSystem.getClip();
+            bgm.open(audioInputStream);
+            bgm.loop(Clip.LOOP_CONTINUOUSLY);
+        } catch (Exception ex) {
         }
-        
-        Collections.shuffle(tickDeck);
+
+        if (numPlayers == 2) {
+            p1Y = ui_locations[2][1];
+            p2Y = ui_locations[2][2];
+        } else if (numPlayers == 3) {
+            p1Y = ui_locations[3][1];
+            p2Y = ui_locations[3][2];
+            p3Y = ui_locations[3][3];
+        } else if (numPlayers == 4) {
+            p1Y = ui_locations[4][1];
+            p2Y = ui_locations[4][2];
+            p3Y = ui_locations[4][3];
+            p4Y = ui_locations[4][4];
+        } else if (numPlayers == 5) {
+            p1Y = ui_locations[5][1];
+            p2Y = ui_locations[5][2];
+            p3Y = ui_locations[5][3];
+            p4Y = ui_locations[5][4];
+            p5Y = ui_locations[5][5];
+        }
+
+        Random r = new Random();
+        for (int i = 0; i < 10; i++) {
+            meepDeck.add(new Meeple("Red"));
+            meepDeck.add(new Meeple("Green"));
+            meepDeck.add(new Meeple("Black"));
+            meepDeck.add(new Meeple("Yellow"));
+            meepDeck.add(new Meeple("Blue"));
+            meepDeck.add(new Meeple("White"));
+        }
+        Collections.shuffle(meepDeck);
+        townList.get(0).myMeeps.add(meepDeck.get(0));
+        meepDeck.remove(0);
+        townList.get(1).myMeeps.add(meepDeck.get(0));
+        meepDeck.remove(0);
+        townList.get(2).myMeeps.add(meepDeck.get(0));
+        meepDeck.remove(0);
+        townList.get(3).myMeeps.add(meepDeck.get(0));
+        meepDeck.remove(0);
+        townList.get(4).myMeeps.add(meepDeck.get(0));
+        meepDeck.remove(0);
+        townList.get(4).myMeeps.add(meepDeck.get(0));
+        meepDeck.remove(0);
+        townList.get(4).myMeeps.add(meepDeck.get(0));
+        meepDeck.remove(0);
+        townList.get(4).myMeeps.add(meepDeck.get(0));
+        meepDeck.remove(0);
+        townList.get(5).myMeeps.add(meepDeck.get(0));
+        meepDeck.remove(0);
+        townList.get(6).myMeeps.add(meepDeck.get(0));
+        meepDeck.remove(0);
+        townList.get(7).myMeeps.add(meepDeck.get(0));
+        meepDeck.remove(0);
+        townList.get(8).myMeeps.add(meepDeck.get(0));
+        meepDeck.remove(0);
+        townList.get(9).myMeeps.add(meepDeck.get(0));
+        meepDeck.remove(0);
+        townList.get(10).myMeeps.add(meepDeck.get(0));
+        meepDeck.remove(0);
+        townList.get(10).myMeeps.add(meepDeck.get(0));
+        meepDeck.remove(0);
+        townList.get(10).myMeeps.add(meepDeck.get(0));
+        meepDeck.remove(0);
+        townList.get(10).myMeeps.add(meepDeck.get(0));
+        meepDeck.remove(0);
+        townList.get(10).myMeeps.add(meepDeck.get(0));
+        meepDeck.remove(0);
+        townList.get(11).myMeeps.add(meepDeck.get(0));
+        meepDeck.remove(0);
+        townList.get(12).myMeeps.add(meepDeck.get(0));
+        meepDeck.remove(0);
+        townList.get(13).myMeeps.add(meepDeck.get(0));
+        meepDeck.remove(0);
+        townList.get(14).myMeeps.add(meepDeck.get(0));
+        meepDeck.remove(0);
+        townList.get(14).myMeeps.add(meepDeck.get(0));
+        meepDeck.remove(0);
+        townList.get(14).myMeeps.add(meepDeck.get(0));
+        meepDeck.remove(0);
+        townList.get(15).myMeeps.add(meepDeck.get(0));
+        meepDeck.remove(0);
+        townList.get(16).myMeeps.add(meepDeck.get(0));
+        meepDeck.remove(0);
+        townList.get(17).myMeeps.add(meepDeck.get(0));
+        meepDeck.remove(0);
+        townList.get(18).myMeeps.add(meepDeck.get(0));
+        meepDeck.remove(0);
+        townList.get(18).myMeeps.add(meepDeck.get(0));
+        meepDeck.remove(0);
+        townList.get(18).myMeeps.add(meepDeck.get(0));
+        meepDeck.remove(0);
+        townList.get(18).myMeeps.add(meepDeck.get(0));
+        meepDeck.remove(0);
+        townList.get(19).myMeeps.add(meepDeck.get(0));
+        meepDeck.remove(0);
+        townList.get(20).myMeeps.add(meepDeck.get(0));
+        meepDeck.remove(0);
+        townList.get(21).myMeeps.add(meepDeck.get(0));
+        meepDeck.remove(0);
+        townList.get(21).myMeeps.add(meepDeck.get(0));
+        meepDeck.remove(0);
+        townList.get(21).myMeeps.add(meepDeck.get(0));
+        meepDeck.remove(0);
+        townList.get(22).myMeeps.add(meepDeck.get(0));
+        meepDeck.remove(0);
+        townList.get(23).myMeeps.add(meepDeck.get(0));
+        meepDeck.remove(0);
+        townList.get(23).myMeeps.add(meepDeck.get(0));
+        meepDeck.remove(0);
+        townList.get(23).myMeeps.add(meepDeck.get(0));
+        meepDeck.remove(0);
+        townList.get(23).myMeeps.add(meepDeck.get(0));
+        meepDeck.remove(0);
+        townList.get(24).myMeeps.add(meepDeck.get(0));
+        meepDeck.remove(0);
+        townList.get(25).myMeeps.add(meepDeck.get(0));
+        meepDeck.remove(0);
+        townList.get(26).myMeeps.add(meepDeck.get(0));
+        meepDeck.remove(0);
+        townList.get(27).myMeeps.add(meepDeck.get(0));
+        meepDeck.remove(0);
+        townList.get(28).myMeeps.add(meepDeck.get(0));
+        meepDeck.remove(0);
+        townList.get(29).myMeeps.add(meepDeck.get(0));
+        meepDeck.remove(0);
+        townList.get(29).myMeeps.add(meepDeck.get(0));
+        meepDeck.remove(0);
+        townList.get(29).myMeeps.add(meepDeck.get(0));
+        meepDeck.remove(0);
+        townList.get(29).myMeeps.add(meepDeck.get(0));
+        meepDeck.remove(0);
+        townList.get(30).myMeeps.add(meepDeck.get(0));
+        meepDeck.remove(0);
+        townList.get(31).myMeeps.add(meepDeck.get(0));
+        meepDeck.remove(0);
+        townList.get(32).myMeeps.add(meepDeck.get(0));
+        meepDeck.remove(0);
+        townList.get(33).myMeeps.add(meepDeck.get(0));
+        meepDeck.remove(0);
+        townList.get(34).myMeeps.add(meepDeck.get(0));
+        meepDeck.remove(0);
+        townList.get(35).myMeeps.add(meepDeck.get(0));
+        meepDeck.remove(0);
+        townList.get(36).myMeeps.add(meepDeck.get(0));
+        meepDeck.remove(0);
+        townList.get(37).myMeeps.add(meepDeck.get(0));
+        meepDeck.remove(0);
+        townList.get(39).myMeeps.add(meepDeck.get(0));
+        meepDeck.remove(0);
+        townList.get(40).myMeeps.add(meepDeck.get(0));
+        meepDeck.remove(0);
+
+        townList.get(38).myMeeps = townList.get(37).myMeeps;
+
+        TixDeck bDeck = new TixDeck(1137, 30, "Blue");
+        objs.add(bDeck);
+
+        TixDeck oDeck = new TixDeck(1209, 30, "Orange");
+        objs.add(oDeck);
 
         Deck deck1 = new Deck(1130, 605);
         objs.add(deck1);
@@ -458,13 +1028,17 @@ public class CoffeeSucks extends JPanel implements ActionListener, MouseListener
 
         //fillDock();
         //give first player first cards
-        currentHand.add(new Card(1130, 605, deck.get(0), "hand", hand[colorID(deck.get(0))], 675));
+        currentHand.add(new Card(1130, 605, deck.get(0), "hand",
+                hand[colorID(deck.get(0))], 675));
         deck.remove(0);
-        currentHand.add(new Card(1130, 605, deck.get(0), "hand", hand[colorID(deck.get(0))], 675));
+        currentHand.add(new Card(1130, 605, deck.get(0), "hand",
+                hand[colorID(deck.get(0))], 675));
         deck.remove(0);
-        currentHand.add(new Card(1130, 605, deck.get(0), "hand", hand[colorID(deck.get(0))], 675));
+        currentHand.add(new Card(1130, 605, deck.get(0), "hand",
+                hand[colorID(deck.get(0))], 675));
         deck.remove(0);
-        currentHand.add(new Card(1130, 605, deck.get(0), "hand", hand[colorID(deck.get(0))], 675));
+        currentHand.add(new Card(1130, 605, deck.get(0), "hand",
+                hand[colorID(deck.get(0))], 675));
         deck.remove(0);
         startHandSize = 4;
 
@@ -478,6 +1052,38 @@ public class CoffeeSucks extends JPanel implements ActionListener, MouseListener
         objs.add(new PlayerText(currentPlayer));
 
         objs.add(new AnimatedTrain(0, 1));
+
+        Button b1 = new Button("m1", 45, 45, (int) meepButt[0].getX(), (int) meepButt[0].getY(), "none");
+        //objs.add(b1);
+        meepButts.add(b1);
+        Button b2 = new Button("m2", 45, 45, (int) meepButt[1].getX(), (int) meepButt[1].getY(), "none");
+        meepButts.add(b2);
+        //objs.add(b2);
+        Button b3 = new Button("m3", 45, 45, (int) meepButt[2].getX(), (int) meepButt[2].getY(), "none");
+        meepButts.add(b3);
+        //objs.add(b3);
+        Button b4 = new Button("m4", 45, 45, (int) meepButt[3].getX(), (int) meepButt[3].getY(), "none");
+        meepButts.add(b4);
+        //objs.add(b4);
+        Button b5 = new Button("m5", 45, 45, (int) meepButt[4].getX(), (int) meepButt[4].getY(), "none");
+        meepButts.add(b5);
+        //objs.add(b5);
+        Button b6 = new Button("m6", 45, 45, (int) meepButt[5].getX(), (int) meepButt[5].getY(), "none");
+        //objs.add(b6);
+        meepButts.add(b6);
+        Button b7 = new Button("m7", 45, 45, (int) meepButt[6].getX(), (int) meepButt[6].getY(), "none");
+        meepButts.add(b7);
+        //objs.add(b7);
+        meepButts.add(b7);
+        Button b8 = new Button("m8", 45, 45, (int) meepButt[7].getX(), (int) meepButt[7].getY(), "none");
+        //objs.add(b8);
+        meepButts.add(b8);
+        Button b9 = new Button("m9", 45, 45, (int) meepButt[8].getX(), (int) meepButt[8].getY(), "none");
+        //objs.add(b8);
+        meepButts.add(b9);
+
+        initalizeTix();
+        playSound(snd_ticksel,false);
 
     }
 
@@ -526,6 +1132,37 @@ public class CoffeeSucks extends JPanel implements ActionListener, MouseListener
         titleobjs.add(loadgame);
 
     }
+    
+     public void results() {
+
+        JFrame frame = new JFrame("Ticket To Ride - powered by CoffeeSucksEngine v1");
+        currentFrame = frame;
+        currentRoom = "Results";
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //what do we do on close?
+        frame.add(this); //makes the paintComponent add
+        frame.setResizable(false); //locks size
+        frame.requestFocus();
+        frame.toFront();
+        //frame.addKeyListener(p1); //every object with inputs needs this
+        frame.addMouseListener(this);
+        frame.addMouseMotionListener(this);
+        frame.setSize(screenSize); //sets size
+        frame.setVisible(true);
+        frame.setBackground(Color.BLACK);
+        timer.start();
+
+        try {
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(snd_results).getAbsoluteFile());
+            titlemusic = AudioSystem.getClip();
+            titlemusic.open(audioInputStream);
+            titlemusic.loop(Clip.LOOP_CONTINUOUSLY);
+        } catch (Exception ex) {
+        }
+        
+        stepping = true;
+        calcRes();
+        
+    }
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -544,6 +1181,7 @@ public class CoffeeSucks extends JPanel implements ActionListener, MouseListener
             debugFrames++;
         } else {
             totalTime += System.nanoTime() - start;
+            if (stepping)
             step();;
             frameCount++;
         }
@@ -571,13 +1209,22 @@ public class CoffeeSucks extends JPanel implements ActionListener, MouseListener
             g.drawImage(bgFrame, 0, 0, this);
             g.drawImage(ROOM_BACKGROUND, 0, 0, this);
             g.setColor(Color.BLACK);
+
+            Image pointboard = null;
+            String pbPath = (dir + "\\TTRAssets\\pointboard.png");
+            pointboard = new ImageIcon(pbPath).getImage();
+            g.drawImage(pointboard, 208, 32, this);
             /*
             g.drawString(Integer.toString(dockedCards.size()), 40, 50);
             g.drawString(Integer.toString(currentHand.size()), 40, 70);
-            g.drawString(Integer.toString(debugTime), 40, 90);
-            g.drawString(Integer.toString(debugFrames), 40, 110);
-            g.drawString(Integer.toString(deck.size()), 40, 120);
+           
              */
+            //g.drawString(" " + meepTime, 40, 110);
+
+            g.drawString(test2, 40, 550);
+            //g.drawString(Integer.toString(lastPlayer), 100, 100);
+            //g.drawString(Integer.toString(largeTickDeck.size()), 40, 110);
+            //g.drawString(Integer.toString(debugCount), 40, 130);
             //the magic line. This draws every object in the objs array
             Graphics2D g2 = (Graphics2D) g;
 
@@ -604,11 +1251,44 @@ public class CoffeeSucks extends JPanel implements ActionListener, MouseListener
                 //g2.draw(curr.mask);
 
             }
-            for (RoadPath curr : hitBoxes) {
-                g.setColor(Color.BLACK);
-                //g.drawPolygon(curr.boundBox);
+
+            for (Ticket curr : selectedTix) {
+               if (curr.visible){
+                g.drawImage(curr.sprite_index, curr.x, curr.y, this);
+                g.drawImage(curr.topSpr, curr.x, curr.y, this);
+                g2.setColor(Color.BLACK);
+                //g2.draw(curr.mask);
+               }
+
             }
 
+            for (Ticket curr : currentTix) {
+                g.drawImage(curr.sprite_index, curr.x, curr.y, this);
+                g.drawImage(curr.topSpr, curr.x, curr.y, this);
+                g2.setColor(Color.BLACK);
+                //g2.draw(curr.mask);
+
+            }
+
+
+            String arPath = (dir + "\\TTRAssets\\dest.png");
+            Image lookHere =  new ImageIcon(arPath).getImage();
+            
+            for (Town curr : rolledTowns) {
+                //g.setColor(Color.RED);
+                g.drawImage(lookHere,curr.xLoc,curr.yLoc-41,this);
+            }
+            
+            for (Button curr : meepButts) {
+                g.drawImage(curr.sprite_index, curr.x, curr.y, this);
+                //if (curr.active)
+                //g2.draw(curr.mask);
+            }
+
+            //for(Meeple curr: myPlayers[0].myMeeps){
+            //p1meeps += curr.myColor;
+            //        }
+            //g.drawString(p1meeps,200,200);
             Image s_sideUI = null;
             try {
                 String sideUI = (dir + "\\TTRAssets\\ui_" + numPlayers + ".gif");
@@ -673,6 +1353,8 @@ public class CoffeeSucks extends JPanel implements ActionListener, MouseListener
 
             }
 
+            
+
             if (cardCount("Red") > 1) {
                 g.setColor(Color.RED);
                 g.drawString(Integer.toString(cardCount("Red")), hand[0] + 55, 660);
@@ -716,47 +1398,213 @@ public class CoffeeSucks extends JPanel implements ActionListener, MouseListener
             Image tb = new ImageIcon(textBox).getImage();
             g.drawImage(tb, 853, 50, this);
 
+            String meepBox = (dir + "\\TTRAssets\\meeple\\back.png");
+            Image mb = new ImageIcon(meepBox).getImage();
+            g.drawImage(mb, 862, 489, this);
+
             g.setColor(rolled);
             g.drawString(rollover1, 865, 110);
             g.setColor(Color.BLACK);
             g.drawString(rollover2, 865, 140);
             g.drawString(rollover3, 865, 170);
+
             /* //debug stuff
             g.drawString(Integer.toString(debugCount), 865, 210);
             g.drawString(Integer.toString(selectedCards.size()), 865, 240);
             g.drawString(specialTest, 865, 260);
-            g.drawString(test2, 865, 280);
              */
-
+            //g.drawString(Integer.toString(smallTickDeck.size()), 865, 280);
+            //g.drawString(Integer.toString(largeTickDeck.size()), 865, 380);
             if (numPlayers == 2) {
                 g.setColor(Color.WHITE);
-                g.drawString(Integer.toString(myPlayers[0].myScore), 100, ui_locations[numPlayers][myPlayers[0].ID + 1]);
-                g.drawString(Integer.toString(myPlayers[1].myScore), 100, ui_locations[numPlayers][myPlayers[1].ID + 1]);
+                g.drawString("Score " + Integer.toString(myPlayers[0].myScore), 70, ui_locations[numPlayers][myPlayers[0].ID + 1]);
+                g.drawString("Score " + Integer.toString(myPlayers[1].myScore), 70, ui_locations[numPlayers][myPlayers[1].ID + 1]);
             }
 
             if (numPlayers == 3) {
                 g.setColor(Color.WHITE);
-                g.drawString(Integer.toString(myPlayers[0].myScore), 100, ui_locations[numPlayers][myPlayers[0].ID + 1]);
-                g.drawString(Integer.toString(myPlayers[1].myScore), 100, ui_locations[numPlayers][myPlayers[1].ID + 1]);
-                g.drawString(Integer.toString(myPlayers[2].myScore), 100, ui_locations[numPlayers][myPlayers[2].ID + 1]);
+                g.drawString("Score " + Integer.toString(myPlayers[0].myScore), 70, ui_locations[numPlayers][myPlayers[0].ID + 1]);
+                g.drawString("Score " + Integer.toString(myPlayers[1].myScore), 70, ui_locations[numPlayers][myPlayers[1].ID + 1]);
+                g.drawString("Score " + Integer.toString(myPlayers[2].myScore), 70, ui_locations[numPlayers][myPlayers[2].ID + 1]);
             }
 
             if (numPlayers == 4) {
                 g.setColor(Color.WHITE);
-                g.drawString(Integer.toString(myPlayers[0].myScore), 100, ui_locations[numPlayers][myPlayers[0].ID + 1]);
-                g.drawString(Integer.toString(myPlayers[1].myScore), 100, ui_locations[numPlayers][myPlayers[1].ID + 1]);
-                g.drawString(Integer.toString(myPlayers[2].myScore), 100, ui_locations[numPlayers][myPlayers[2].ID + 1]);
-                g.drawString(Integer.toString(myPlayers[3].myScore), 100, ui_locations[numPlayers][myPlayers[3].ID + 1]);
+                g.drawString("Score " + Integer.toString(myPlayers[0].myScore), 70, ui_locations[numPlayers][myPlayers[0].ID + 1]);
+                g.drawString("Score " + Integer.toString(myPlayers[1].myScore), 70, ui_locations[numPlayers][myPlayers[1].ID + 1]);
+                g.drawString("Score " + Integer.toString(myPlayers[2].myScore), 70, ui_locations[numPlayers][myPlayers[2].ID + 1]);
+                g.drawString("Score " + Integer.toString(myPlayers[3].myScore), 70, ui_locations[numPlayers][myPlayers[3].ID + 1]);
             }
 
             if (numPlayers == 5) {
                 g.setColor(Color.WHITE);
-                g.drawString(Integer.toString(myPlayers[0].myScore), 100, ui_locations[numPlayers][myPlayers[0].ID + 1]);
-                g.drawString(Integer.toString(myPlayers[1].myScore), 100, ui_locations[numPlayers][myPlayers[1].ID + 1]);
-                g.drawString(Integer.toString(myPlayers[2].myScore), 100, ui_locations[numPlayers][myPlayers[2].ID + 1]);
-                g.drawString(Integer.toString(myPlayers[3].myScore), 100, ui_locations[numPlayers][myPlayers[3].ID + 1]);
-                g.drawString(Integer.toString(myPlayers[4].myScore), 100, ui_locations[numPlayers][myPlayers[4].ID + 1]);
+                g.drawString("Score " + Integer.toString(myPlayers[0].myScore), 70, ui_locations[numPlayers][myPlayers[0].ID + 1]);
+                g.drawString("Score " + Integer.toString(myPlayers[1].myScore), 70, ui_locations[numPlayers][myPlayers[1].ID + 1]);
+                g.drawString("Score " + Integer.toString(myPlayers[2].myScore), 70, ui_locations[numPlayers][myPlayers[2].ID + 1]);
+                g.drawString("Score " + Integer.toString(myPlayers[3].myScore), 70, ui_locations[numPlayers][myPlayers[3].ID + 1]);
+                g.drawString("Score " + Integer.toString(myPlayers[4].myScore), 70, ui_locations[numPlayers][myPlayers[4].ID + 1]);
             }
+
+            for (Town curr : townList) {
+                //g2.draw(curr.mask);
+            }
+
+            //if (getMeeps > 0){
+            for (int i = 0; i < pathMeeps.size(); i++) {
+                if (pathMeeps.get(i).myColor == "Red") {
+                    g.drawImage(redmeep, (int) meepButt[i].getX(), (int) meepButt[i].getY(), this);
+                }
+                if (pathMeeps.get(i).myColor == "Blue") {
+                    g.drawImage(bluemeep, (int) meepButt[i].getX(), (int) meepButt[i].getY(), this);
+                }
+                if (pathMeeps.get(i).myColor == "Green") {
+                    g.drawImage(greenmeep, (int) meepButt[i].getX(), (int) meepButt[i].getY(), this);
+                }
+                if (pathMeeps.get(i).myColor == "Yellow") {
+                    g.drawImage(yellowmeep, (int) meepButt[i].getX(), (int) meepButt[i].getY(), this);
+                }
+                if (pathMeeps.get(i).myColor == "Black") {
+                    g.drawImage(blackmeep, (int) meepButt[i].getX(), (int) meepButt[i].getY(), this);
+                }
+                if (pathMeeps.get(i).myColor == "White") {
+                    g.drawImage(whitemeep, (int) meepButt[i].getX(), (int) meepButt[i].getY(), this);
+                }
+            }
+            //}
+
+            String bb = (dir + "\\TTRAssets\\meeple\\Black.png");
+            Image blackM = new ImageIcon(bb).getImage();
+            String bl = (dir + "\\TTRAssets\\meeple\\Blue.png");
+            Image blueM = new ImageIcon(bl).getImage();
+            String re = (dir + "\\TTRAssets\\meeple\\Red.png");
+            Image redM = new ImageIcon(re).getImage();
+            String gr = (dir + "\\TTRAssets\\meeple\\Green.png");
+            Image greenM = new ImageIcon(gr).getImage();
+            String wh = (dir + "\\TTRAssets\\meeple\\White.png");
+            Image whiteM = new ImageIcon(wh).getImage();
+            String ye = (dir + "\\TTRAssets\\meeple\\Yellow.png");
+            Image yellowM = new ImageIcon(ye).getImage();
+
+            for (int i = 0; i < myPlayers[0].myMeeps.size(); i++) {
+                if (myPlayers[0].myMeeps.get(i).myColor == "Red") {
+                    g.drawImage(redM, 13 + (6 * i), p1Y, this);
+                }
+                if (myPlayers[0].myMeeps.get(i).myColor == "Blue") {
+                    g.drawImage(blueM, 13 + (6 * i), p1Y, this);
+                }
+                if (myPlayers[0].myMeeps.get(i).myColor == "Green") {
+                    g.drawImage(greenM, 13 + (6 * i), p1Y, this);
+                }
+                if (myPlayers[0].myMeeps.get(i).myColor == "Black") {
+                    g.drawImage(blackM, 13 + (6 * i), p1Y, this);
+                }
+                if (myPlayers[0].myMeeps.get(i).myColor == "White") {
+                    g.drawImage(whiteM, 13 + (6 * i), p1Y, this);
+                }
+                if (myPlayers[0].myMeeps.get(i).myColor == "Yellow") {
+                    g.drawImage(yellowM, 13 + (6 * i), p1Y, this);
+                }
+            }
+            for (int i = 0; i < myPlayers[1].myMeeps.size(); i++) {
+                if (myPlayers[1].myMeeps.get(i).myColor == "Red") {
+                    g.drawImage(redM, 13 + (6 * i), p2Y, this);
+                }
+                if (myPlayers[1].myMeeps.get(i).myColor == "Blue") {
+                    g.drawImage(blueM, 13 + (6 * i), p2Y, this);
+                }
+                if (myPlayers[1].myMeeps.get(i).myColor == "Green") {
+                    g.drawImage(greenM, 13 + (6 * i), p2Y, this);
+                }
+                if (myPlayers[1].myMeeps.get(i).myColor == "Black") {
+                    g.drawImage(blackM, 13 + (6 * i), p2Y, this);
+                }
+                if (myPlayers[1].myMeeps.get(i).myColor == "White") {
+                    g.drawImage(whiteM, 13 + (6 * i), p2Y, this);
+                }
+                if (myPlayers[1].myMeeps.get(i).myColor == "Yellow") {
+                    g.drawImage(yellowM, 13 + (6 * i), p2Y, this);
+                }
+            }
+
+            if (numPlayers > 2) {
+                for (int i = 0; i < myPlayers[2].myMeeps.size(); i++) {
+                    if (myPlayers[2].myMeeps.get(i).myColor == "Red") {
+                        g.drawImage(redM, 13 + (6 * i), p3Y, this);
+                    }
+                    if (myPlayers[2].myMeeps.get(i).myColor == "Blue") {
+                        g.drawImage(blueM, 13 + (6 * i), p3Y, this);
+                    }
+                    if (myPlayers[2].myMeeps.get(i).myColor == "Green") {
+                        g.drawImage(greenM, 13 + (6 * i), p3Y, this);
+                    }
+                    if (myPlayers[2].myMeeps.get(i).myColor == "Black") {
+                        g.drawImage(blackM, 13 + (6 * i), p3Y, this);
+                    }
+                    if (myPlayers[2].myMeeps.get(i).myColor == "White") {
+                        g.drawImage(whiteM, 13 + (6 * i), p3Y, this);
+                    }
+                    if (myPlayers[2].myMeeps.get(i).myColor == "Yellow") {
+                        g.drawImage(yellowM, 13 + (6 * i), p3Y, this);
+                    }
+                }
+            }
+            if (numPlayers > 3) {
+                for (int i = 0; i < myPlayers[3].myMeeps.size(); i++) {
+                    if (myPlayers[3].myMeeps.get(i).myColor == "Red") {
+                        g.drawImage(redM, 13 + (6 * i), p4Y, this);
+                    }
+                    if (myPlayers[3].myMeeps.get(i).myColor == "Blue") {
+                        g.drawImage(blueM, 13 + (6 * i), p4Y, this);
+                    }
+                    if (myPlayers[3].myMeeps.get(i).myColor == "Green") {
+                        g.drawImage(greenM, 13 + (6 * i), p4Y, this);
+                    }
+                    if (myPlayers[3].myMeeps.get(i).myColor == "Black") {
+                        g.drawImage(blackM, 13 + (6 * i), p4Y, this);
+                    }
+                    if (myPlayers[3].myMeeps.get(i).myColor == "White") {
+                        g.drawImage(whiteM, 13 + (6 * i), p4Y, this);
+                    }
+                    if (myPlayers[3].myMeeps.get(i).myColor == "Yellow") {
+                        g.drawImage(yellowM, 13 + (6 * i), p4Y, this);
+                    }
+                }
+            }
+            if (numPlayers > 4) {
+                for (int i = 0; i < myPlayers[4].myMeeps.size(); i++) {
+                    if (myPlayers[4].myMeeps.get(i).myColor == "Red") {
+                        g.drawImage(redM, 13 + (6 * i), p5Y, this);
+                    }
+                    if (myPlayers[4].myMeeps.get(i).myColor == "Blue") {
+                        g.drawImage(blueM, 13 + (6 * i), p5Y, this);
+                    }
+                    if (myPlayers[4].myMeeps.get(i).myColor == "Green") {
+                        g.drawImage(greenM, 13 + (6 * i), p5Y, this);
+                    }
+                    if (myPlayers[4].myMeeps.get(i).myColor == "Black") {
+                        g.drawImage(blackM, 13 + (6 * i), p5Y, this);
+                    }
+                    if (myPlayers[4].myMeeps.get(i).myColor == "White") {
+                        g.drawImage(whiteM, 13 + (6 * i), p5Y, this);
+                    }
+                    if (myPlayers[4].myMeeps.get(i).myColor == "Yellow") {
+                        g.drawImage(yellowM, 13 + (6 * i), p5Y, this);
+                    }
+                }
+            }
+            
+             if((canEnd) /*|| (myPlayers[currentPlayer-1].numTrains < 5)*/){
+            String endButt = (dir + "\\TTRAssets\\tickets\\done.png");
+            Image eB = new ImageIcon(endButt).getImage();
+            g.drawImage(eB, (int) meepButt[7].getX(), (int) meepButt[7].getY(), this);
+            }
+            
+            if (!stepping){
+                 String loadStr = (dir + "\\TTRAssets\\loading.png");
+            Image load = new ImageIcon(loadStr).getImage();
+            g.drawImage(load,340 ,60, this);
+            }
+            
 
         }
         if (currentRoom.equals("Title")) {
@@ -793,6 +1641,36 @@ public class CoffeeSucks extends JPanel implements ActionListener, MouseListener
 
             }
         }
+        
+        if (currentRoom.equals("Results")) {
+            //drawing specifc things
+            String resBG = (dir + "\\TTRAssets\\results.png");
+            Image resBack = null;
+            try{
+            resBack = ImageIO.read(new File(resBG));
+            
+            } catch (IOException e) {
+            }
+
+
+            //g.drawImage(aniBG, 0, 100, this);
+            g.drawImage(resBack, 0, 0, this);
+
+            g.setColor(Color.BLACK);
+            Graphics2D g2 = (Graphics2D) g;
+            /*
+            String winnerPic = (dir + "\\TTRAssets\\" + ranked[0].ID + ".gif");
+            Image winPic = new ImageIcon(winnerPic).getImage();
+            g.drawImage(winPic, 498, 246, this);
+            
+            */
+            for(int i = 0; i<numPlayers-1; i++){
+            //g.drawString("Player " + Integer.toString(ranked[i].ID), 314, (297 + (i * 20)));
+            g.drawString(Integer.toString(ranked[i].myScore), 709, (297 + (i * 20)));
+            }
+            
+
+        }
     }
 
     @Override
@@ -806,11 +1684,52 @@ public class CoffeeSucks extends JPanel implements ActionListener, MouseListener
 
     public void step() {
 
+        if (currentRoom == "GameBoard")
+        if(!finalRound)
+         if (myPlayers[currentPlayer-1].numTrains < 3){
+            finalRound = true;
+        }
+            
         if (currentRoom == "GameBoard") {
-            if (dockedCards.size() < 5) {
-                fillDock();
+            if (deck.size() > 0) {
+                if (dockedCards.size() < 5) {
+                    fillDock();
+                }
             }
         }
+
+        if (deck.size() == 0) {
+            for (GameObject curr : objs) {
+                if (curr instanceof Deck) {
+                    if (curr.visible = true) {
+                        curr.visible = false;
+                    }
+                }
+            }
+        }
+        /*
+        if (smallTickDeck.size() == 0) {
+            for (GameObject curr : objs) {
+                if (curr instanceof TixDeck) {
+                    if (((TixDeck) curr).myType == "Blue")
+                    if (curr.visible = true) {
+                        curr.visible = false;
+                    }
+                }
+            }
+        }
+ 
+        if (largeTickDeck.size() == 0) {
+            for (GameObject curr : objs) {
+                if (curr instanceof TixDeck) {
+                    if (((TixDeck) curr).myType == "Orange")
+                    if (curr.visible = true) {
+                        curr.visible = false;
+                    }
+                }
+            }
+        }
+        */
 
         if (counting) {
             if (countdown < 75) {
@@ -839,6 +1758,14 @@ public class CoffeeSucks extends JPanel implements ActionListener, MouseListener
         }
         for (Card curr4 : selectedCards) {
             curr4.step();
+        }
+
+        for (Ticket curr5 : selectedTix) {
+            curr5.step();
+        }
+
+        for (Ticket curr6 : currentTix) {
+            curr6.step();
         }
         debugTime++;
 
@@ -890,13 +1817,88 @@ public class CoffeeSucks extends JPanel implements ActionListener, MouseListener
                 }
             }
         }
-
+        if (turn != 0) {
+            if ((dockedCards.size() == 0) && (deck.size() == 0)) {
+                if (cardsTaken == 1) {
+                    cardsTaken = 2;
+                }
+            }
+        }
     }
 
     public void mouseMoved(MouseEvent e) {
         int x = e.getX();
         int y = e.getY() - 25;
         Point p = new Point(x, y);
+
+        for (Town curr : townList) {
+
+            if (curr.mask.contains(p)) {
+                rolled = Color.BLACK;
+                rollover1 = curr.townName;
+                if (curr.myMeeps.size() > 0) {
+                    rollover2 = "Meeples:";
+                    if (curr.meepleColorCount("Red") > 0) {
+                        rollover2 += " Red:" + curr.meepleColorCount("Red") + " ";
+                    }
+                    if (curr.meepleColorCount("Black") > 0) {
+                        rollover2 += " Black:" + curr.meepleColorCount("Black") + " ";
+                    }
+                    rollover3 = "";
+                    if (curr.meepleColorCount("Green") > 0) {
+                        rollover3 += "Green:" + curr.meepleColorCount("Green") + " ";
+                    }
+                    if (curr.meepleColorCount("Yellow") > 0) {
+                        rollover3 += "Yellow:" + curr.meepleColorCount("Yellow") + " ";
+                    }
+                    if (curr.meepleColorCount("Blue") > 0) {
+                        rollover3 += "Blue:" + curr.meepleColorCount("Blue") + " ";
+                    }
+                    if (curr.meepleColorCount("White") > 0) {
+                        rollover3 += "White:" + curr.meepleColorCount("White") + " ";
+                    }
+                } else {
+                    rollover2 = "NO MEEPLES HERE";
+                    rollover3 = "";
+                }
+            }
+
+        }
+
+        for (Ticket curr : selectedTix) {
+
+            if (curr.mask.contains(p)) {
+
+                if (curr.myValue < 12) {
+                    rolled = Color.BLUE;
+                } else {
+                    rolled = Color.BLACK;
+                }
+
+                rollover1 = Integer.toString(curr.myValue) + " point card";
+                rollover2 = curr.start.townName + " to";
+                rollover3 = curr.dest.townName;
+            }
+        }
+
+        for (Ticket curr : currentTix) {
+
+            if (curr.mask.contains(p)) {
+                rolledTowns.clear();
+                if (curr.myValue < 12) {
+                    rolled = Color.BLUE;
+                } else {
+                    rolled = Color.BLACK;
+                }
+                
+                rolledTowns.add(curr.start);
+                rolledTowns.add(curr.dest);
+
+                rollover1 = Integer.toString(curr.myValue) + " point card";
+                rollover2 = curr.start.townName + " to";
+                rollover3 = curr.dest.townName;
+            }
+        }
 
         for (RoadPath curr : hitBoxes) {
 
@@ -906,7 +1908,11 @@ public class CoffeeSucks extends JPanel implements ActionListener, MouseListener
                 rollover2 = "Length of " + Integer.toString(curr.myLength);
                 //debugCount = countCards(curr.myColor);
 
-                if (curr.myOwn != 0) {
+                if (curr.myOwn < 0) {
+                    rollover3 = "NOT AVAILABLE";
+                }
+
+                if (curr.myOwn > 0) {
                     rollover3 = "Owned By:Player " + Integer.toString(curr.myOwn);
                 }
 
@@ -1003,24 +2009,366 @@ public class CoffeeSucks extends JPanel implements ActionListener, MouseListener
             }
         }
 
+        for (Button curr : meepButts) {
+            if (curr.mask.contains(p)) {
+                //if (curr.visible) {
+                
+                if((canEnd) /*|| (myPlayers[currentPlayer-1].numTrains < 5)*/){
+                    if (((Button) curr).myID == "m8") {
+                            playSound(snd_blip, false);
+                            
+                            for (int j = 0; j<currentTix.size();j++){
+                            for (int i = 0; i<smallTickDeck.size(); i++) {
+                                if (currentTix.get(j) == smallTickDeck.get(i)) {
+                                    currentTix.remove(j);
+                                }
+                            }
+                            }
+                            for (int j = 0; j<currentTix.size();j++){
+                            for (int i = 0; i<largeTickDeck.size(); i++) {
+                                if (currentTix.get(j) == largeTickDeck.get(i)) {
+                                    currentTix.remove(j);
+                                }
+                            }
+                            }
+                            canEnd = false;
+                            tixPicked = 0;
+                            endTurn();
+                            
+                            
+                            
+                            }
+                        
+                }
+                
+                if (meepTime) {
+                    if (((Button) curr).active) {
+                        playSound(snd_meep, false);
+                        if (((Button) curr).myID == "m1") {
+                            for (Town curr2 : myGuys) {
+                                for (int i = 0; i < curr2.myMeeps.size(); i++) {
+                                    if (pathMeeps.get(0) == curr2.myMeeps.get(i)) {
+                                        myPlayers[currentPlayer - 1].myMeeps.add(pathMeeps.get(0));
+                                        curr2.myMeeps.remove(i);
+                                        //pathMeeps.remove(0);
+                                    }
+                                }
+                            }
+                            playSound(snd_drawcard, false);
+                            ((Button) curr).active = false;
+                            getMeeps--;
+
+                            if (getMeeps == 0) {
+                                meepTime = false;
+                                endTurn();
+                            }
+                        }
+
+                        if (((Button) curr).myID == "m2") {
+                            for (Town curr2 : myGuys) {
+                                for (int i = 0; i < curr2.myMeeps.size(); i++) {
+                                    if (pathMeeps.get(1) == curr2.myMeeps.get(i)) {
+                                        myPlayers[currentPlayer - 1].myMeeps.add(pathMeeps.get(1));
+                                        curr2.myMeeps.remove(i);
+                                        //pathMeeps.remove(0);
+                                    }
+                                }
+                            }
+                            playSound(snd_drawcard, false);
+                            ((Button) curr).active = false;
+                            getMeeps--;
+
+                            if (getMeeps == 0) {
+                                meepTime = false;
+                                endTurn();
+                            }
+                        }
+
+                        if (((Button) curr).myID == "m3") {
+                            for (Town curr2 : myGuys) {
+                                for (int i = 0; i < curr2.myMeeps.size(); i++) {
+                                    if (pathMeeps.get(2) == curr2.myMeeps.get(i)) {
+                                        myPlayers[currentPlayer - 1].myMeeps.add(pathMeeps.get(2));
+                                        curr2.myMeeps.remove(i);
+                                        //pathMeeps.remove(0);
+                                    }
+                                }
+                            }
+                            playSound(snd_drawcard, false);
+                            ((Button) curr).active = false;
+                            getMeeps--;
+
+                            if (getMeeps == 0) {
+                                meepTime = false;
+                                endTurn();
+                            }
+                        }
+
+                        if (((Button) curr).myID == "m4") {
+                            for (Town curr2 : myGuys) {
+                                for (int i = 0; i < curr2.myMeeps.size(); i++) {
+                                    if (pathMeeps.get(3) == curr2.myMeeps.get(i)) {
+                                        myPlayers[currentPlayer - 1].myMeeps.add(pathMeeps.get(3));
+                                        curr2.myMeeps.remove(i);
+                                        //pathMeeps.remove(0);
+                                    }
+                                }
+                            }
+                            playSound(snd_drawcard, false);
+                            ((Button) curr).active = false;
+                            getMeeps--;
+
+                            if (getMeeps == 0) {
+                                meepTime = false;
+                                endTurn();
+                            }
+                        }
+
+                        if (((Button) curr).myID == "m5") {
+                            for (Town curr2 : myGuys) {
+                                for (int i = 0; i < curr2.myMeeps.size(); i++) {
+                                    if (pathMeeps.get(4) == curr2.myMeeps.get(i)) {
+                                        myPlayers[currentPlayer - 1].myMeeps.add(pathMeeps.get(4));
+                                        curr2.myMeeps.remove(i);
+                                        //pathMeeps.remove(0);
+                                    }
+                                }
+                            }
+                            playSound(snd_drawcard, false);
+                            ((Button) curr).active = false;
+                            getMeeps--;
+
+                            if (getMeeps == 0) {
+                                meepTime = false;
+                                endTurn();
+                            }
+                        }
+
+                        if (((Button) curr).myID == "m6") {
+                            for (Town curr2 : myGuys) {
+                                for (int i = 0; i < curr2.myMeeps.size(); i++) {
+                                    if (pathMeeps.get(5) == curr2.myMeeps.get(i)) {
+                                        myPlayers[currentPlayer - 1].myMeeps.add(pathMeeps.get(5));
+                                        curr2.myMeeps.remove(i);
+                                        //pathMeeps.remove(0);
+                                    }
+                                }
+                            }
+                            playSound(snd_drawcard, false);
+                            ((Button) curr).active = false;
+                            getMeeps--;
+
+                            if (getMeeps == 0) {
+                                meepTime = false;
+                                endTurn();
+                            }
+                        }
+
+                        if (((Button) curr).myID == "m7") {
+                            for (Town curr2 : myGuys) {
+                                for (int i = 0; i < curr2.myMeeps.size(); i++) {
+                                    if (pathMeeps.get(6) == curr2.myMeeps.get(i)) {
+                                        myPlayers[currentPlayer - 1].myMeeps.add(pathMeeps.get(6));
+                                        curr2.myMeeps.remove(i);
+                                        //pathMeeps.remove(0);
+                                    }
+                                }
+                            }
+                            playSound(snd_drawcard, false);
+                            ((Button) curr).active = false;
+                            getMeeps--;
+
+                            if (getMeeps == 0) {
+                                meepTime = false;
+                                endTurn();
+                            }
+                        }
+
+                        if (((Button) curr).myID == "m8") {
+                            for (Town curr2 : myGuys) {
+                                for (int i = 0; i < curr2.myMeeps.size(); i++) {
+                                    if (pathMeeps.get(7) == curr2.myMeeps.get(i)) {
+                                        myPlayers[currentPlayer - 1].myMeeps.add(pathMeeps.get(7));
+                                        curr2.myMeeps.remove(i);
+                                        //pathMeeps.remove(0);
+                                    }
+                                }
+                            }
+                            playSound(snd_drawcard, false);
+                            ((Button) curr).active = false;
+                            getMeeps--;
+
+                            if (getMeeps == 0) {
+                                meepTime = false;
+                                endTurn();
+                            }
+                        }
+                        
+                        if (((Button) curr).myID == "m9") {
+                            for (Town curr2 : myGuys) {
+                                for (int i = 0; i < curr2.myMeeps.size(); i++) {
+                                    if (pathMeeps.get(8) == curr2.myMeeps.get(i)) {
+                                        myPlayers[currentPlayer - 1].myMeeps.add(pathMeeps.get(8));
+                                        curr2.myMeeps.remove(i);
+                                        //pathMeeps.remove(0);
+                                    }
+                                }
+                            }
+                            playSound(snd_drawcard, false);
+                            ((Button) curr).active = false;
+                            getMeeps--;
+
+                            if (getMeeps == 0) {
+                                meepTime = false;
+                                endTurn();
+                            }
+                        }
+
+                    }
+                }
+
+            }
+            //}
+        }
+
+        for (Ticket curr : selectedTix) {
+            if (curr.visible) {
+                if (curr.mask.contains(p)) {
+                    if (curr.vspeed == 0) {
+                        if (e.getButton() == MouseEvent.BUTTON1) {
+                            canEnd = false;
+                            curr.visible = false;
+                            playSound(snd_liftcard, false);
+                            
+                            for(int i = 0; i<selectedTix.size(); i++){
+                                if (curr == selectedTix.get(i)){
+                                    selectedTix.remove(i);
+                                    i = 0;
+                                }
+                                
+                            }
+                            
+                            currentTix.add(new Ticket(curr.getX(), curr.getY(), curr.myID, curr.myValue, "hand", 268, 169 + (20 * currentTix.size()), curr.start, curr.dest));
+                            tixPicked++;
+                            
+                            if (turn == 0){
+                                if (tixPicked >= 2){
+                                    canEnd = true;
+                                }
+                            }
+                            else{
+                              if (tixPicked >= 1){
+                                    canEnd = true;
+                                }  
+                            }
+                                
+                            
+                            if (tixPicked == 4) {
+                                for (int j = 0; j<currentTix.size();j++){
+                            for (int i = 0; i<smallTickDeck.size(); i++) {
+                                if (currentTix.get(j) == smallTickDeck.get(i)) {
+                                    currentTix.remove(j);
+                                }
+                            }
+                            }
+                            for (int j = 0; j<currentTix.size();j++){
+                            for (int i = 0; i<largeTickDeck.size(); i++) {
+                                if (currentTix.get(j) == largeTickDeck.get(i)) {
+                                    currentTix.remove(j);
+                                }
+                            }
+                            }
+                                tixPicked = 0;
+                                endTurn();
+                            }
+
+                        }
+                    }
+
+                }
+            }
+        }
+
         for (GameObject curr : objs) {
             if (curr.mask.contains(p)) {
                 if (curr instanceof Deck) {
-                    if (selectedCards.size() == 0) {
-                        if (cardsTaken < 2) {
-                            if (deck.get(0).equals("Rainbow")) {
-                                cardsTaken++;
-                            } else {
-                                cardsTaken++;
-                            }
-                            playSound(snd_drawcard, false);
-                            currentHand.add(new Card(curr.getX(), curr.getY(),
-                                    deck.get(0), "hand", hand[colorID(deck.get(0))],
-                                    675));
-                            startHandSize++;
-                            deck.remove(0);
-                        }
+                    if (tixNeedToTake == 0) {
+                        if (selectedTix.size() == 0) {
+                            if (!meepTime) {
+                                if (deck.size() > 0) {
+                                    if (selectedCards.size() == 0) {
+                                        if (cardsTaken < 2) {
+                                            if (deck.get(0).equals("Rainbow")) {
+                                                cardsTaken++;
+                                            } else {
+                                                cardsTaken++;
+                                            }
+                                            playSound(snd_drawcard, false);
+                                            currentHand.add(new Card(curr.getX(), curr.getY(),
+                                                    deck.get(0), "hand", hand[colorID(deck.get(0))],
+                                                    675));
+                                            startHandSize++;
+                                            deck.remove(0);
+                                        }
 
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (curr instanceof TixDeck) {
+                    if (!meepTime) {
+                        
+                            if (tixFromPile < 4) {
+                                if (selectedCards.size() == 0) {
+                                    if (cardsTaken == 0) {
+                                        playSound(snd_drawcard, false);
+                                        if (((TixDeck) curr).myType == "Blue") {
+                                            if (smallTickDeck.size() > 0) {
+                                          /*      
+                                        if (tixNeedToTake > 0) {
+                                            if (tixFromPile < tixNeedToTake) {
+                                                tixFromPile++;
+                                            }
+                                        }*/
+                                          tixFromPile++;
+
+                                        if (tixNeedToTake == 0) {
+                                            tixNeedToTake = 3;
+                                        }
+                                            }
+                                            selectedTix.add(new Ticket(curr.x, curr.y, smallTickDeck.get(0).myID, smallTickDeck.get(0).myValue,
+                                                    "dock", (int) tixPix[selectedTix.size()].getX(),
+                                                    (int) tixPix[selectedTix.size()].getY(), smallTickDeck.get(0).start, smallTickDeck.get(0).dest));
+                                            smallTickDeck.remove(0);
+                                        }
+                                        if (((TixDeck) curr).myType == "Orange") {
+                                            
+                                         /*      
+                                        if (tixNeedToTake > 0) {
+                                            if (tixFromPile < tixNeedToTake) {
+                                                tixFromPile++;
+                                            }
+                                        }*/
+                                          tixFromPile++;
+
+                                        if (tixNeedToTake == 0) {
+                                            tixNeedToTake = 3;
+                                        }
+                                            if (largeTickDeck.size() > 0) {
+                                            selectedTix.add(new Ticket(curr.x, curr.y, largeTickDeck.get(0).myID, largeTickDeck.get(0).myValue,
+                                                    "dock", (int) tixPix[selectedTix.size()].getX(),
+                                                    (int) tixPix[selectedTix.size()].getY(), largeTickDeck.get(0).start, largeTickDeck.get(0).dest));
+                                            largeTickDeck.remove(0);
+                                        }
+
+                                    }
+
+                                }
+                            }
+                        }
                     }
                 }
 
@@ -1047,140 +2395,163 @@ public class CoffeeSucks extends JPanel implements ActionListener, MouseListener
         for (Card curr : dockedCards) {
             if (curr.mask.contains(p)) {
                 if (curr.vspeed == 0) {
-                    if (selectedCards.size() == 0) {
-                        if (cardsTaken == 1) {
-                            if (curr.myColor != "Rainbow") {
+                    if (selectedTix.size() == 0) {
+                        if (tixNeedToTake == 0) {
+                            if (!meepTime) {
+                                if (selectedCards.size() == 0) {
+                                    if (cardsTaken == 1) {
+                                        if (curr.myColor != "Rainbow") {
 
-                                if (curr.myColor == "Rainbow") {
+                                            if (curr.myColor == "Rainbow") {
 
-                                    cardsTaken += 2;
-                                } else {
-                                    cardsTaken++;
-                                }
+                                                cardsTaken += 2;
+                                            } else {
+                                                cardsTaken++;
+                                            }
 
-                                playSound(snd_drawcard, false);
-                                currentHand.add(new Card(curr.getX(), curr.getY(), curr.myColor, "hand", hand[curr.colorID], 675));
-                                startHandSize++;
-                                curr.visible = false;
+                                            playSound(snd_drawcard, false);
+                                            currentHand.add(new Card(curr.getX(), curr.getY(), curr.myColor, "hand", hand[curr.colorID], 675));
+                                            startHandSize++;
+                                            curr.visible = false;
 
-                                for (Card curr2 : dockedCards) {
-                                    if (curr == curr2) {
-                                        dockedCards.remove(curr);
+                                            for (Card curr2 : dockedCards) {
+                                                if (curr == curr2) {
+                                                    dockedCards.remove(curr);
+                                                }
+                                            }
+
+                                        }
+                                    }
+                                    if (cardsTaken == 0) {
+
+                                        if (curr.myColor == "Rainbow") {
+
+                                            cardsTaken += 2;
+                                        } else {
+                                            cardsTaken++;
+                                        }
+
+                                        playSound(snd_drawcard, false);
+                                        currentHand.add(new Card(curr.getX(), curr.getY(), curr.myColor, "hand", hand[curr.colorID], 675));
+                                        startHandSize++;
+                                        curr.visible = false;
+
+                                        for (Card curr2 : dockedCards) {
+                                            if (curr == curr2) {
+                                                dockedCards.remove(curr);
+                                            }
+                                        }
+
                                     }
                                 }
-
                             }
-                        }
-                        if (cardsTaken == 0) {
-
-                            if (curr.myColor == "Rainbow") {
-
-                                cardsTaken += 2;
-                            } else {
-                                cardsTaken++;
-                            }
-
-                            playSound(snd_drawcard, false);
-                            currentHand.add(new Card(curr.getX(), curr.getY(), curr.myColor, "hand", hand[curr.colorID], 675));
-                            startHandSize++;
-                            curr.visible = false;
-
-                            for (Card curr2 : dockedCards) {
-                                if (curr == curr2) {
-                                    dockedCards.remove(curr);
-                                }
-                            }
-
                         }
                     }
                 }
 
             }
         }
-        if (cardsTaken == 0) {
-            for (Card curr : currentHand) {
-                if (curr.mask.contains(p)) {
-                    if (e.getButton() == MouseEvent.BUTTON1) {
-                        if (curr.vspeed == 0) {
-                            playSound(snd_liftcard, false);
-                            selectedCards.add(new Card(/*curr.getX(), curr.getY(),*/curr.getX(), curr.getY(), curr.myColor, "selected", curr.getX(), curr.getY() - 60));
-                            curr.visible = false;
-                            for (Card curr2 : currentHand) {
-                                if (curr == curr2) {
-                                    currentHand.remove(curr);
+        if (!meepTime) {
+            if (selectedTix.size() == 0) {
+                if (tixNeedToTake == 0) {
+                    if (cardsTaken == 0) {
+                        for (Card curr : currentHand) {
+                            if (curr.mask.contains(p)) {
+                                if (e.getButton() == MouseEvent.BUTTON1) {
+                                    if (curr.vspeed == 0) {
+                                        playSound(snd_liftcard, false);
+                                        selectedCards.add(new Card(/*curr.getX(), curr.getY(),*/curr.getX(), curr.getY(), curr.myColor, "selected", curr.getX(), curr.getY() - 60));
+                                        curr.visible = false;
+                                        for (Card curr2 : currentHand) {
+                                            if (curr == curr2) {
+                                                currentHand.remove(curr);
+                                            }
+                                        }
+                                    }
+
                                 }
                             }
                         }
 
-                    }
-                }
-            }
-
-            for (Card curr : selectedCards) {
-                if (curr.mask.contains(p)) {
-                    if (curr.vspeed == 0) {
-                        if (e.getButton() == MouseEvent.BUTTON3) {
-                            playSound(snd_retractcard, false);
-                            currentHand.add(new Card(/*curr.getX(), curr.getY(),*/curr.getX(), curr.getY(), curr.myColor, "hand", curr.getX(), curr.getY() + 60));
-                            curr.visible = false;
-                            for (Card curr2 : selectedCards) {
-                                if (curr == curr2) {
-                                    selectedCards.remove(curr);
+                        for (Card curr : selectedCards) {
+                            if (curr.mask.contains(p)) {
+                                if (curr.vspeed == 0) {
+                                    if (e.getButton() == MouseEvent.BUTTON3) {
+                                        playSound(snd_retractcard, false);
+                                        currentHand.add(new Card(/*curr.getX(), curr.getY(),*/curr.getX(), curr.getY(), curr.myColor, "hand", curr.getX(), curr.getY() + 60));
+                                        curr.visible = false;
+                                        for (Card curr2 : selectedCards) {
+                                            if (curr == curr2) {
+                                                selectedCards.remove(curr);
+                                            }
+                                        }
+                                    }
                                 }
+
+                            }
+                        }
+
+                        for (RoadPath curr : hitBoxes) {
+                            if (curr.boundBox.contains(p)) {
+                                if (curr.myOwn == 0) {
+                                    if(myPlayers[currentPlayer-1].numTrains >= curr.myLength)
+                                    if (countCards(curr.myColor) == curr.myLength) {
+                                        objs.add(new AnimatedTrain(currentPlayer, curr.ID));
+                                        if (numPlayers < 4) {
+                                            doublesDelete(curr);
+                                        }
+                                        playSound(snd_blip, false);
+                                        playSound(snd_train, false);
+                                        playSound(snd_money, false);
+                                        selectedCards.clear();
+                                        myPlayers[currentPlayer - 1].numTrains -= curr.myLength;
+                                        curr.myOwn = currentPlayer;
+                                        if (curr.myLength == 1) {
+                                            myPlayers[currentPlayer - 1].myScore += 1;
+                                        }
+                                        if (curr.myLength == 2) {
+                                            myPlayers[currentPlayer - 1].myScore += 2;
+                                        }
+                                        if (curr.myLength == 3) {
+                                            myPlayers[currentPlayer - 1].myScore += 4;
+                                        }
+                                        if (curr.myLength == 4) {
+                                            myPlayers[currentPlayer - 1].myScore += 7;
+                                        }
+                                        if (curr.myLength == 5) {
+                                            myPlayers[currentPlayer - 1].myScore += 10;
+                                        }
+                                        if (curr.myLength == 6) {
+                                            myPlayers[currentPlayer - 1].myScore += 15;
+                                        }
+                                        if (curr.myLength == 7) {
+                                            myPlayers[currentPlayer - 1].myScore += 18;
+                                        }
+
+                                        if (curr.myOwn != 0) {
+                                            rollover3 = "Owned By:Player " + Integer.toString(curr.myOwn);
+                                        }
+
+                                        if (curr.myOwn == 0) {
+                                            rollover3 = "Available";
+                                        }
+
+                                        if (!meepTime) {
+                                            if (meepTime(curr) > 0) {
+                                                meepTime = true;
+                                            } else {
+
+                                                endTurn();
+                                            }
+                                        }
+                                    } else {
+                                        playSound(snd_nope, false);
+                                    }
+                                }
+
                             }
                         }
                     }
-
-                }
-            }
-
-            for (RoadPath curr : hitBoxes) {
-                if (curr.boundBox.contains(p)) {
-                    if (curr.myOwn == 0) {
-                        //debugCount = countCards(curr.myColor);
-                        if (countCards(curr.myColor) == curr.myLength) {
-                            objs.add(new AnimatedTrain(currentPlayer, curr.ID));
-                            playSound(snd_blip, false);
-                            playSound(snd_train, false);
-                            playSound(snd_money, false);
-                            selectedCards.clear();
-                            myPlayers[currentPlayer - 1].numTrains -= curr.myLength;
-                            curr.myOwn = currentPlayer;
-                            if (curr.myLength == 1) {
-                                myPlayers[currentPlayer - 1].myScore += 1;
-                            }
-                            if (curr.myLength == 2) {
-                                myPlayers[currentPlayer - 1].myScore += 2;
-                            }
-                            if (curr.myLength == 3) {
-                                myPlayers[currentPlayer - 1].myScore += 4;
-                            }
-                            if (curr.myLength == 4) {
-                                myPlayers[currentPlayer - 1].myScore += 7;
-                            }
-                            if (curr.myLength == 5) {
-                                myPlayers[currentPlayer - 1].myScore += 10;
-                            }
-                            if (curr.myLength == 6) {
-                                myPlayers[currentPlayer - 1].myScore += 15;
-                            }
-                            if (curr.myLength == 7) {
-                                myPlayers[currentPlayer - 1].myScore += 18;
-                            }
-
-                            if (curr.myOwn != 0) {
-                                rollover3 = "Owned By:Player " + Integer.toString(curr.myOwn);
-                            }
-
-                            if (curr.myOwn == 0) {
-                                rollover3 = "Available";
-                            }
-                            endTurn();
-                        } else {
-                            playSound(snd_nope, false);
-                        }
-                    }
-
                 }
             }
         }
@@ -1213,13 +2584,65 @@ public class CoffeeSucks extends JPanel implements ActionListener, MouseListener
     }
 
     public void endTurn() {
+        
+        stepping = false;
+        
+        if(!finalRound)
+         if (myPlayers[currentPlayer-1].numTrains < 3){
+            finalRound = true;
+        }
+        
+        tixFromPile = 0;
+        
+        if (finalRound){
+            if (lastPlayer == numPlayers){
+                bgm.stop();
+                currentFrame.setVisible(false);
+                mainObj.results();  
+            }
+            else{
+            playSound(snd_final,false);
+            }
+        }
+        
+        test2 = "";
+        canEnd = false;
+        
+        if (selectedTix.size() > 0) {
+            while (selectedTix.size() > 0) {
+                if (selectedTix.get(0).myValue > 11) {
+                    largeTickDeck.add(new Ticket(0, 0, selectedTix.get(0).myID, selectedTix.get(0).myValue, selectedTix.get(0).myState, selectedTix.get(0).start, selectedTix.get(0).dest));
+                    selectedTix.remove(0);
+                } else {
+                    smallTickDeck.add(new Ticket(0, 0, selectedTix.get(0).myID, selectedTix.get(0).myValue, selectedTix.get(0).myState, selectedTix.get(0).start, selectedTix.get(0).dest));
+                    selectedTix.remove(0);
+                }
+            }
+        }
+        
+        
 
         if (turn == 0) {
             startHandSize = 4;
+        } 
+        
+        //stepping = false;
+        //if (!hasChecked)
+        for (int i = 0; i<myPlayers[currentPlayer - 1].myTix.size(); i++) {
+            //debugCount = i;
+            if(checkTick(myPlayers[currentPlayer - 1].myTix.get(i).start, myPlayers[currentPlayer - 1].myTix.get(i).dest, myPlayers[currentPlayer - 1].myTix.get(i)))
+            i = 0;
+            checkedTowns.clear();
         }
-
+        //hasChecked = true;
+       // stepping = true;
+        
         myPlayers[currentPlayer - 1].myHand = currentHand;
         cardsTaken = 0;
+
+        myPlayers[currentPlayer - 1].myTix = currentTix;
+
+        
 
         if (currentPlayer < numPlayers) {
             currentPlayer++;
@@ -1228,6 +2651,7 @@ public class CoffeeSucks extends JPanel implements ActionListener, MouseListener
         }
 
         currentHand = myPlayers[currentPlayer - 1].myHand;
+        currentTix = myPlayers[currentPlayer - 1].myTix;
 
         startHandSize = currentHand.size();
 
@@ -1235,7 +2659,9 @@ public class CoffeeSucks extends JPanel implements ActionListener, MouseListener
             curr.visible = true;
         }
 
+        pathMeeps.clear();
         cleanUpHand();
+        cleanUpTix();
         objs.add(new PlayerText(currentPlayer));
 
         if (currentPlayer == 1) {
@@ -1243,6 +2669,9 @@ public class CoffeeSucks extends JPanel implements ActionListener, MouseListener
         }
 
         if (turn == 0) {
+            playSound(snd_ticksel,false);
+            tixNeedToTake = 4;
+            tixNeedToKeep = 2;
             currentHand.add(new Card(1130, 605, deck.get(0), "hand", hand[colorID(deck.get(0))], 675));
             deck.remove(0);
             currentHand.add(new Card(1130, 605, deck.get(0), "hand", hand[colorID(deck.get(0))], 675));
@@ -1252,10 +2681,30 @@ public class CoffeeSucks extends JPanel implements ActionListener, MouseListener
             currentHand.add(new Card(1130, 605, deck.get(0), "hand", hand[colorID(deck.get(0))], 675));
             deck.remove(0);
             startHandSize = 4;
+        } 
+        else {
+            tixNeedToTake = 0;
+            tixNeedToKeep = 0;
+
+            checkedTowns.clear();
         }
-
+        
+       
+        
+        hasChecked = false;
+        
+         
+        if (finalRound)
+            lastPlayer++;
+        
+        stepping = true;
+        
+        rolledTowns.clear();
+        
+        test2 = "finsh" + test2;
+        
     }
-
+    
     public void fillDock() {
         playSound(snd_deck, false);
         while (dockedCards.size() < 5) {
@@ -1334,12 +2783,33 @@ public class CoffeeSucks extends JPanel implements ActionListener, MouseListener
             currentHand.get(i).y = currentHand.get(i).y;
             currentHand.get(i).inTransit = false;
             currentHand.get(i).hspeed = 0;
+            currentHand.get(i).vspeed = 0;
+        }
+    }
+
+    public void cleanUpTix() {
+        for (int i = 0; i < currentTix.size(); i++) {
+            currentTix.get(i).x = 268;
+            currentTix.get(i).y = 169 + (20 * i);
+            currentTix.get(i).inTransit = false;
+            currentTix.get(i).hspeed = 0;
+            currentTix.get(i).vspeed = 0;
         }
     }
 
     public int cardCount(String color) {
         int count = 0;
         for (Card curr : currentHand) {
+            if (curr.myColor.equals(color)) {
+                count++;
+            }
+        }
+        return count;
+    }
+    
+    public int meepColCount(String color, int pNum) {
+        int count = 0;
+        for (Meeple curr : myPlayers[pNum].myMeeps) {
             if (curr.myColor.equals(color)) {
                 count++;
             }
@@ -1379,4 +2849,441 @@ public class CoffeeSucks extends JPanel implements ActionListener, MouseListener
 
     }
 
+    public void doublesDelete(RoadPath bought) {
+        if (bought.ID == 4) {
+            hitBoxes.get(5).myOwn = -1;
+        }
+        if (bought.ID == 6) {
+            hitBoxes.get(3).myOwn = -1;
+        }
+
+        if (bought.ID == 13) {
+            hitBoxes.get(13).myOwn = -1;
+        }
+        if (bought.ID == 14) {
+            hitBoxes.get(12).myOwn = -1;
+        }
+
+        if (bought.ID == 40) {
+            hitBoxes.get(38).myOwn = -1;
+        }
+        if (bought.ID == 39) {
+            hitBoxes.get(39).myOwn = -1;
+        }
+
+        if (bought.ID == 60) {
+            hitBoxes.get(60).myOwn = -1;
+        }
+        if (bought.ID == 61) {
+            hitBoxes.get(59).myOwn = -1;
+        }
+
+        if (bought.ID == 38) {
+            hitBoxes.get(36).myOwn = -1;
+        }
+        if (bought.ID == 37) {
+            hitBoxes.get(37).myOwn = -1;
+        }
+
+        if (bought.ID == 51) {
+            hitBoxes.get(49).myOwn = -1;
+        }
+        if (bought.ID == 50) {
+            hitBoxes.get(50).myOwn = -1;
+        }
+
+        if (bought.ID == 53) {
+            hitBoxes.get(53).myOwn = -1;
+            hitBoxes.get(54).myOwn = -1;
+        }
+        if (bought.ID == 54) {
+            hitBoxes.get(52).myOwn = -1;
+            hitBoxes.get(54).myOwn = -1;
+        }
+        if (bought.ID == 55) {
+            hitBoxes.get(53).myOwn = -1;
+            hitBoxes.get(52).myOwn = -1;
+        }
+
+        if (bought.ID == 56) {
+            hitBoxes.get(56).myOwn = -1;
+            hitBoxes.get(57).myOwn = -1;
+        }
+        if (bought.ID == 57) {
+            hitBoxes.get(55).myOwn = -1;
+            hitBoxes.get(57).myOwn = -1;
+        }
+        if (bought.ID == 58) {
+            hitBoxes.get(55).myOwn = -1;
+            hitBoxes.get(56).myOwn = -1;
+        }
+
+        if (bought.ID == 35) {
+            hitBoxes.get(35).myOwn = -1;
+        }
+        if (bought.ID == 36) {
+            hitBoxes.get(34).myOwn = -1;
+        }
+
+        if (bought.ID == 33) {
+            hitBoxes.get(31).myOwn = -1;
+        }
+        if (bought.ID == 32) {
+            hitBoxes.get(32).myOwn = -1;
+        }
+
+        if (bought.ID == 96) {
+            hitBoxes.get(96).myOwn = -1;
+        }
+        if (bought.ID == 97) {
+            hitBoxes.get(95).myOwn = -1;
+        }
+
+        if (bought.ID == 93) {
+            hitBoxes.get(93).myOwn = -1;
+        }
+        if (bought.ID == 94) {
+            hitBoxes.get(92).myOwn = -1;
+        }
+
+        if (bought.ID == 91) {
+            hitBoxes.get(91).myOwn = -1;
+        }
+        if (bought.ID == 92) {
+            hitBoxes.get(90).myOwn = -1;
+        }
+
+        if (bought.ID == 89) {
+            hitBoxes.get(89).myOwn = -1;
+        }
+        if (bought.ID == 90) {
+            hitBoxes.get(88).myOwn = -1;
+        }
+
+        if (bought.ID == 78) {
+            hitBoxes.get(78).myOwn = -1;
+        }
+        if (bought.ID == 79) {
+            hitBoxes.get(77).myOwn = -1;
+        }
+
+        if (bought.ID == 77) {
+            hitBoxes.get(75).myOwn = -1;
+        }
+        if (bought.ID == 76) {
+            hitBoxes.get(76).myOwn = -1;
+        }
+
+        if (bought.ID == 73) {
+            hitBoxes.get(73).myOwn = -1;
+        }
+        if (bought.ID == 74) {
+            hitBoxes.get(72).myOwn = -1;
+        }
+
+        if (bought.ID == 66) {
+            hitBoxes.get(66).myOwn = -1;
+        }
+        if (bought.ID == 67) {
+            hitBoxes.get(65).myOwn = -1;
+        }
+
+        if (bought.ID == 64) {
+            hitBoxes.get(64).myOwn = -1;
+        }
+        if (bought.ID == 65) {
+            hitBoxes.get(63).myOwn = -1;
+        }
+
+        if (bought.ID == 62) {
+            hitBoxes.get(62).myOwn = -1;
+        }
+        if (bought.ID == 63) {
+            hitBoxes.get(61).myOwn = -1;
+        }
+
+        if (bought.ID == 81) {
+            hitBoxes.get(81).myOwn = -1;
+        }
+        if (bought.ID == 82) {
+            hitBoxes.get(80).myOwn = -1;
+        }
+
+        if (bought.ID == 84) {
+            hitBoxes.get(84).myOwn = -1;
+        }
+        if (bought.ID == 85) {
+            hitBoxes.get(83).myOwn = -1;
+        }
+        if (bought.ID == 86) {
+            hitBoxes.get(86).myOwn = -1;
+        }
+        if (bought.ID == 87) {
+            hitBoxes.get(85).myOwn = -1;
+        }
+
+    }
+
+    public boolean checkTick(Town s, Town e, Ticket t) {
+        //stepping = false;
+        System.out.println(s.townName + " " + e.townName);
+        //boolean safe = false;
+        
+        for (int i = 0; i < s.paths.size(); i++) {
+            System.out.println(i);
+            if (s == e) {
+                playSound(snd_route, false);
+                myPlayers[currentPlayer-1].numTravel++;
+                //checkedTowns.clear();
+                myPlayers[currentPlayer - 1].myScore += t.myValue;
+                
+                for (int j = 0; j < myPlayers[currentPlayer - 1].myTix.size(); j++) {
+                    if (myPlayers[currentPlayer - 1].myTix.get(j) == t) {
+                        playSound(snd_route, false);
+                        myPlayers[currentPlayer - 1].myTix.remove(j);
+                    }
+                }
+                
+                playSound(snd_route, false); 
+               // stepping = true;
+                return true; //if we have reached our goal
+
+            } 
+            else if (currentPlayer == s.paths.get(i).myOwn) {
+                for (Town curr : townList) {
+                    if ((!checkedTowns.contains(s.paths.get(i))) && (curr != s) && (curr.paths.contains(s.paths.get(i)))) {
+                        checkedTowns.add(s.paths.get(i));
+                        checkTick(curr, e, t);
+                    }
+                } 
+
+            }
+        }
+        //checkedTowns.clear();
+        //stepping = true;
+        return false;
+    }
+
+    public int meepTime(RoadPath check) {
+
+        for (Button curr : meepButts) {
+            curr.active = true;
+        }
+
+        pathMeeps.clear();
+        myGuys.clear();
+        int howMany = 0;
+        for (Town curr : townList) {
+            if (curr.paths.contains(check)) {
+                myGuys.add(curr);
+            }
+        }
+        for (Town curr2 : myGuys) {
+            if (curr2.myMeeps.size() > 0) {
+                howMany++;
+            }
+            for (Meeple curr3 : curr2.myMeeps) {
+                pathMeeps.add(curr3);
+            }
+        }
+
+        if (howMany > 2) {
+            howMany = 2;
+        }
+
+        getMeeps = howMany;
+        return howMany;
+    }
+
+    public void initalizeTix() {
+
+        Collections.shuffle(smallTickDeck);
+        Collections.shuffle(largeTickDeck);
+    }
+    
+    public void calcRes(){
+        
+        int[] redMeepCount = new int[5];
+        int[] blueMeepCount = new int[5];
+        int[] yellowMeepCount = new int[5];
+        int[] greenMeepCount = new int[5];
+        int[] whiteMeepCount = new int[5];
+        int[] blackMeepCount = new int[5];
+        
+        for (int k = 0; k<numPlayers; k++){
+           redMeepCount[k] = meepColCount("Red",k); 
+           blueMeepCount[k] = meepColCount("Blue",k); 
+           yellowMeepCount[k] = meepColCount("Yellow",k); 
+           greenMeepCount[k] = meepColCount("Green",k); 
+           whiteMeepCount[k] = meepColCount("White",k); 
+           blackMeepCount[k] = meepColCount("Black",k); 
+        }
+        
+        int oneRed = 0;
+        int twoRed = 0;
+        int oneBlue = 0;
+        int twoBlue = 0;
+        int oneGreen = 0;
+        int twoGreen = 0;
+        int oneBlack = 0;
+        int twoBlack = 0;
+        int oneYellow = 0;
+        int twoYellow = 0;
+        int oneWhite = 0;
+        int twoWhite = 0;
+        
+        boolean redTie = false;
+        boolean greenTie = false;
+        boolean blueTie = false;
+        boolean yellowTie = false;
+        boolean blackTie = false;
+        boolean whiteTie = false;
+        
+        
+        for (int d = 0; d<5; d++){
+            
+        if (redMeepCount[d] > twoRed){
+            twoRed = redMeepCount[d];
+        }    
+        if (redMeepCount[d] > oneRed){
+            oneRed = redMeepCount[d];
+        } 
+        
+        if (blueMeepCount[d] > twoBlue){
+            twoBlue = blueMeepCount[d];
+        }    
+        if (blueMeepCount[d] > oneBlue){
+            oneBlue = blueMeepCount[d];
+        } 
+        
+        if (greenMeepCount[d] > twoGreen){
+            twoGreen = greenMeepCount[d];
+        }    
+        if (greenMeepCount[d] > oneGreen){
+            oneGreen = greenMeepCount[d];           //GET NUMS FOR MOST MEEPS
+        }
+        
+        if (yellowMeepCount[d] > twoYellow){
+            twoYellow = yellowMeepCount[d];
+        }    
+        if (yellowMeepCount[d] > oneYellow){
+            oneYellow = yellowMeepCount[d];
+        }
+        
+        if (blackMeepCount[d] > twoBlack){
+            twoBlack = blackMeepCount[d] ;
+        }    
+        if (blackMeepCount[d] > oneBlack){
+            oneBlack = blackMeepCount[d] ;
+        }
+        
+        if (whiteMeepCount[d] > twoWhite){
+            twoWhite = whiteMeepCount[d];
+        }    
+        if (whiteMeepCount[d] > oneWhite){
+            oneWhite = whiteMeepCount[d];
+        }
+        
+        }
+        /*
+        if (redMeepCount[oneRed] == redMeepCount[twoRed])
+        redTie = true;    
+        if (blueMeepCount[oneBlue] == blueMeepCount[twoBlue])
+        blueTie = true;  
+        if (greenMeepCount[oneGreen] == greenMeepCount[twoGreen])
+        greenTie = true;  
+        if (yellowMeepCount[oneYellow] == yellowMeepCount[twoYellow])
+        yellowTie = true;  
+        if (blackMeepCount[oneBlack] == blackMeepCount[twoBlack])
+        blackTie = true;  
+        if (whiteMeepCount[oneWhite] == whiteMeepCount[twoWhite])
+        whiteTie = true;  
+        */
+        
+            for (int k = 0; k<numPlayers; k++){
+            if (redMeepCount[k] == oneRed)
+            myPlayers[k].myScore += 20;
+            if (redMeepCount[k] == twoRed)
+            myPlayers[k].myScore += 10; 
+            
+            if (blueMeepCount[k] == oneBlue)
+            myPlayers[k].myScore += 20;
+            if (blueMeepCount[k] == twoBlue)
+            myPlayers[k].myScore += 10; 
+            
+            if (greenMeepCount[k] == oneGreen)
+            myPlayers[k].myScore += 20;
+            if (greenMeepCount[k] == twoGreen)
+            myPlayers[k].myScore += 10;                  //ADD POINTS FOR MOST MEEPS
+            
+            if (yellowMeepCount[k] == oneYellow)
+            myPlayers[k].myScore += 20;
+            if (yellowMeepCount[k] == twoYellow)
+            myPlayers[k].myScore += 10; 
+            
+            if (blackMeepCount[k] == oneBlack)
+            myPlayers[k].myScore += 20;
+            if (blackMeepCount[k] == twoBlack)
+            myPlayers[k].myScore += 10; 
+            
+            if (whiteMeepCount[k] == oneWhite)
+            myPlayers[k].myScore += 20;
+            if (whiteMeepCount[k] == twoWhite)
+            myPlayers[k].myScore += 10; 
+
+            }
+
+            int globeTrotNum = 0;
+            
+            for (int e = 0; e<numPlayers; e++){
+                if (myPlayers[e].numTravel > globeTrotNum ){ //CALC GLOBE NUM
+                    globeTrotNum = myPlayers[e].numTravel;
+                }        
+            }
+            
+            for (int e = 0; e<numPlayers; e++){
+                if (myPlayers[e].numTravel == globeTrotNum ){ //ADD POINTS IF YOU HAVE THE GLOBE NUM
+                    myPlayers[e].myScore += 15;
+                }        
+            }
+            /*
+            for (Player curr: myPlayers){
+                for (Ticket curr2: curr.myTix){
+                    curr.myScore -= curr2.myValue; //REMOVE UNSUCCESSFUL CARDS
+                }
+            }
+            ***************************************************************************FIX THIS!!!!!!!!!!!!!!! IF THIS HASNT BEEN REMOVED
+            */ 
+        
+        //puts players in order by score
+        Player[] pointRank = new Player[5];
+        int p = 0;
+        
+        for(Player curr: myPlayers){
+        pointRank[p] = curr;    
+        }
+        
+        Player hold = null;
+        for(int i = 1; i<numPlayers; i++){
+            if (pointRank[i] != null)
+            if (pointRank[i].myScore > pointRank[i-1].myScore){
+                hold = pointRank[i-1];
+                pointRank[i-1] = pointRank[i];
+                pointRank[i] = hold;
+            }
+        }
+        
+        ranked = pointRank;
+        
+        
+    }
+    
+    
+
+    /*
+    //REMOVES DUPE CARDS
+                            
+    
+    */
+    
 }

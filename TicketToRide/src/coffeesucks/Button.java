@@ -20,6 +20,7 @@ public class Button extends GameObject{
     
     String myID;
     Image s_butt;
+    boolean active = true;
     
     public Button(String ID, int w, int h,int mx, int my, String spr){
         x= mx;
@@ -36,6 +37,13 @@ public class Button extends GameObject{
     public String toString(){return "null";}
     public void clicked(){}
     public void rClicked(){}
+    
+    public void flipActive(){
+        if (active)
+            active = false;
+        else
+            active = true;
+    }
 }
 
 
