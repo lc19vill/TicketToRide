@@ -17,7 +17,7 @@ public class Player {
     ArrayList<Meeple> myMeeps = new ArrayList<>();
     ArrayList<Ticket> myTix = new ArrayList<>();
     int ID;
-    int numTrains = 3;
+    int numTrains = 20;
     int myScore = 0;
     int numTravel = 0;
 
