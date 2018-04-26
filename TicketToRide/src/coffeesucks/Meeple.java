@@ -5,11 +5,13 @@
  */
 package coffeesucks;
 
+import java.io.Serializable;
+
 /**
  *
  * @author mk3lero
  */
-public class Meeple {
+public class Meeple implements Serializable{
     
     String myColor;
     

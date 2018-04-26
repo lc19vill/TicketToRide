@@ -15,7 +15,7 @@ import javax.swing.ImageIcon;
  */
 public class MusicOff extends GameObject{
     
-      Image s_deck;
+      transient Image s_deck;
 
     public MusicOff(){
         String path= (dir + "\\TTRAssets\\nomusic.gif");

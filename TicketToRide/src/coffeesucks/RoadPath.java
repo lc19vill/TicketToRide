@@ -7,6 +7,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import java.awt.Image;
+import java.io.Serializable;
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -17,10 +18,10 @@ import java.awt.Image;
  *
  * @author Mike
  */
-public class RoadPath {
+public class RoadPath implements Serializable {
     Polygon boundBox = new Polygon();
     int ID;
-    Image sprite_index = null;
+    transient Image sprite_index = null;
     String myColor;
     int myLength;
     int myOwn = 0;

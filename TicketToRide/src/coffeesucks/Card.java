@@ -18,7 +18,7 @@ import javax.swing.ImageIcon;
  */
 public class Card extends GameObject{
     
-    Image s_card;
+    transient Image s_card;
     String myState;
     String myColor;
     int colorID = -1;

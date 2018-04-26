@@ -15,19 +15,20 @@ import java.awt.geom.Rectangle2D;
 import java.awt.Polygon;
 import javax.sound.sampled.*;
 import java.io.*;
+import java.io.Serializable;
 
 /**
  *
  * @author Mike
  */
-abstract class GameObject {
+abstract class GameObject implements Serializable {
 
     int x = 0;
     int y = 0;
     int gravity;
     double vspeed = 0;
     double hspeed = 0;
-    Image sprite_index = null;
+    transient Image sprite_index = null;
     boolean inTransit = false;
     int nextx;
     int nexty;
@@ -58,7 +59,7 @@ abstract class GameObject {
     int yoffset = 0;
     boolean HIT;
     AudioInputStream nowplaying;
-    Image topSpr;
+    transient Image topSpr;
     boolean Solid = true;
 
     public void jumpX(int newX) {
@@ -79,9 +80,9 @@ abstract class GameObject {
 
     public void setSpriteIndex(Image spr) {
         sprite_index = spr;
-        BufferedImage mySprite = ((BufferedImage) sprite_index);
-        hitboxWidth = mySprite.getWidth();
-        hitboxHeight = mySprite.getHeight();
+        Image mySprite = ((Image) sprite_index);
+        //hitboxWidth = mySprite.getWidth();
+        //hitboxHeight = mySprite.getHeight();
     }
 
     /**
@@ -197,6 +198,7 @@ public ArrayList<GameObject> smallCollisionCheck(ArrayList<GameObject> feedme) {
     }
     
     public void playSound(String soundfile, boolean loop){
+        
         try
         {
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(soundfile).getAbsoluteFile());
@@ -209,7 +211,8 @@ public ArrayList<GameObject> smallCollisionCheck(ArrayList<GameObject> feedme) {
             clip.loop(Clip.LOOP_CONTINUOUSLY);
         }
         catch (Exception ex){
-        }   
+        }  
+
     }
     
     public void stopSound(String soundfile){
@@ -238,56 +241,5 @@ public ArrayList<GameObject> smallCollisionCheck(ArrayList<GameObject> feedme) {
     public double getVSpeed(){
         return vspeed;
     }
-    /*
-    public BufferedImage scaleProcess(BufferedImage imageToScale, int dWidth, int dHeight) {
-        BufferedImage scaledImage = null;
-        if (imageToScale != null) {
-            scaledImage = new BufferedImage(dWidth, dHeight, imageToScale.getType());
-            Graphics2D graphics2D = scaledImage.createGraphics();
-            graphics2D.drawImage(imageToScale, 0, 0, dWidth, dHeight, null);
-            graphics2D.dispose();
-        }
-        return scaledImage;
-    }
-   
-    public void setScale(double s) {
-        BufferedImage bi = (BufferedImage)sprite_index;
-        while (scale < s){
-        scale+=.1;
-        int w = ((int)(bi.getWidth()*scale));
-        int h = ((int)(bi.getHeight()*scale));
-        sprite_index = scaleProcess(bi,w,h);
-        }
-        
-    }
     
-    //TOP RIGHT CORNER CHECKS
-        if (((curr.x+curr.hitboxWidth) >= x) && ((curr.x+curr.hitboxWidth) <= (x+hitboxWidth))){ //right side of curr is within the x range of our object  
-            if (((curr.y) > y) && ((curr.y) < (y+hitboxHeight))) //it's also within the y of our object
-                cols.add(curr);
-        }
-        //TOP LEFT CORNER CHECKS
-        else if (((curr.x) >= x) && ((curr.x) <= (x+hitboxWidth))){ //left side of curr is within the x range of our object  
-            if (((curr.y) > y) && ((curr.y) < (y+hitboxHeight))) //it's also within the y of our object
-                cols.add(curr);
-        }
-        //BOTTOM LEFT CORNER CHECKS
-        else if (((curr.x) >= x) && ((curr.x) <= (x+hitboxWidth))){ //left side of curr is within the x range of our object  
-            if (((curr.y+curr.hitboxHeight) > y) && ((curr.y+curr.hitboxHeight) < (y+hitboxHeight))) //it's also within the y of our object
-                cols.add(curr);
-        }
-        //BOTTOM RIGHT CORNER CHECKS
-        else if (((curr.x+curr.hitboxWidth) >= x) && ((curr.x+curr.hitboxWidth) <= (x+hitboxWidth))){ //left side of curr is within the x range of our object  
-            if (((curr.y+curr.hitboxHeight) > y) && ((curr.y+curr.hitboxHeight) < (y+hitboxHeight))) //it's also within the y of our object
-                cols.add(curr);
-        }
-        //else{
-        //for (int i = 0; i<cols.size();i++){
-        //    if (cols.get(i) == curr){
-        //        cols.remove(curr);
-        //    }
-        //}
-        //}
-            
-     */
 }

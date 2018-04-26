@@ -15,8 +15,8 @@ import javax.swing.ImageIcon;
  */
 public class TixDeck extends GameObject{
     
-    Image s_deck_blue;
-    Image s_deck_orange;
+    transient Image s_deck_blue;
+    transient Image s_deck_orange;
     String myType = "";
 
     String path= (dir + "\\TTRAssets\\tickets\\blueDeck.png");

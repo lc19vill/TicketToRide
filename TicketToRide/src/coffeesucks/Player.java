@@ -5,19 +5,20 @@
  */
 package coffeesucks;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  *
  * @author Mike
  */
-public class Player {
+public class Player implements Serializable{
     
     ArrayList<Card> myHand = new ArrayList<>();
     ArrayList<Meeple> myMeeps = new ArrayList<>();
     ArrayList<Ticket> myTix = new ArrayList<>();
     int ID;
-    int numTrains = 20;
+    int numTrains = 3;
     int myScore = 0;
     int numTravel = 0;
 

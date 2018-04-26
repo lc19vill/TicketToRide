@@ -20,9 +20,9 @@ import java.util.concurrent.TimeUnit;
  */
 public class Deck extends GameObject{
     
-    Image s_deck;
-    Image s_deck_mid;
-    Image s_deck_low;
+    transient Image s_deck;
+    transient Image s_deck_mid;
+    transient Image s_deck_low;
     String path= (dir + "\\TTRAssets\\cards\\deck_1.png");
     String path1= (dir + "\\TTRAssets\\cards\\deck_2.png");
     String path2= (dir + "\\TTRAssets\\cards\\deck_3.png");

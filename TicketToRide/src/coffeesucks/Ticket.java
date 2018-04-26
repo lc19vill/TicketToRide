@@ -16,7 +16,7 @@ import javax.swing.ImageIcon;
  * @author Mike
  */
 public class Ticket extends GameObject{
-   Image s_card;
+   transient Image s_card;
    String myState;
    int myValue; // "short" or "long"
    int myID;
@@ -24,9 +24,9 @@ public class Ticket extends GameObject{
    Town dest;
     
    String pathB = (dir + "\\TTRAssets\\tickets\\deckBlue.png"); 
-   Image blueInDeck = new ImageIcon(pathB).getImage();
+   transient Image blueInDeck = new ImageIcon(pathB).getImage();
    String pathO = (dir + "\\TTRAssets\\tickets\\deckOrange.png");
-   Image orangeInDeck = new ImageIcon(pathO).getImage();
+   transient Image orangeInDeck = new ImageIcon(pathO).getImage();
    
     public Ticket(int myX,int myY, int ID,int val,String state,int destinationX,int destinationY, Town s, Town d){ // TASK 2
         String path= (dir + "\\TTRAssets\\tickets\\card_" + ID + ".jpg"); 

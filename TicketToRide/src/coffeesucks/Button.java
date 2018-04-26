@@ -19,7 +19,7 @@ import javax.swing.ImageIcon;
 public class Button extends GameObject{
     
     String myID;
-    Image s_butt;
+    transient Image s_butt;
     boolean active = true;
     
     public Button(String ID, int w, int h,int mx, int my, String spr){

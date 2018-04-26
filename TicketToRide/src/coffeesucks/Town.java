@@ -7,13 +7,14 @@ package coffeesucks;
 
 import java.util.ArrayList;
 import java.awt.geom.Ellipse2D;
+import java.io.Serializable;
 
 /**
  *
  * @author xluis
  */
 
-public class Town {
+public class Town implements Serializable{
     String townName = "";
     ArrayList<RoadPath> paths = new ArrayList<>();
     ArrayList<Meeple> myMeeps = new ArrayList<>();

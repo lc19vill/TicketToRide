@@ -22,8 +22,9 @@ public class PlayerText extends GameObject{
  
     String snd_voice="";
     String snd_woosh="";
-    Image s_text;
-    Image s_rails;
+    transient Image s_text;
+    transient Image s_rails;
+    
       public PlayerText(int player){
         String path= (dir + "\\TTRAssets\\"+player+"_text.png");
         s_text = new ImageIcon(path).getImage();

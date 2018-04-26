@@ -15,12 +15,18 @@ import javax.swing.ImageIcon;
  */
 public class AnimatedTrain extends GameObject {
 
-    Image s_trainani;
+    transient Image s_trainani;
+    int myID;
+    int myPlayer;
     
     
 
     public AnimatedTrain(int player, int ID) {
         String path = "";
+        
+        myID = ID;
+        myPlayer = player;
+        
         if (player == 1) {
             path = (dir + "\\TTRAssets\\trainanimations\\player1\\1_" + ID + ".gif");
         }
