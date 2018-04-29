@@ -2,6 +2,20 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/C:/Users/Mike/Documents/NetBeansProjects/TicketToRide/src/coffeesucks/MusicOff.java</file>
+            <file>file:/C:/Users/Mike/Documents/NetBeansProjects/TicketToRide/src/coffeesucks/RoadPath.java</file>
+            <file>file:/C:/Users/Mike/Documents/NetBeansProjects/TicketToRide/src/coffeesucks/Deck.java</file>
+            <file>file:/C:/Users/Mike/Documents/NetBeansProjects/TicketToRide/src/coffeesucks/Card.java</file>
+            <file>file:/C:/Users/Mike/Documents/NetBeansProjects/TicketToRide/src/coffeesucks/Place.java</file>
+            <file>file:/C:/Users/Mike/Documents/NetBeansProjects/TicketToRide/src/coffeesucks/Town.java</file>
+            <file>file:/C:/Users/Mike/Documents/NetBeansProjects/TicketToRide/src/coffeesucks/GameObject.java</file>
+            <file>file:/C:/Users/Mike/Documents/NetBeansProjects/TicketToRide/src/coffeesucks/PlayerText.java</file>
+            <file>file:/C:/Users/Mike/Documents/NetBeansProjects/TicketToRide/src/coffeesucks/Ticket.java</file>
+            <file>file:/C:/Users/Mike/Documents/NetBeansProjects/TicketToRide/src/coffeesucks/CoffeeSucks.java</file>
+            <file>file:/C:/Users/Mike/Documents/NetBeansProjects/TicketToRide/src/coffeesucks/Button.java</file>
+            <file>file:/C:/Users/Mike/Documents/NetBeansProjects/TicketToRide/src/coffeesucks/Meeple.java</file>
+            <file>file:/C:/Users/Mike/Documents/NetBeansProjects/TicketToRide/src/coffeesucks/AnimatedTrain.java</file>
+        </group>
     </open-files>
 </project-private>

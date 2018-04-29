@@ -10,11 +10,17 @@ import java.awt.geom.Ellipse2D;
 import java.io.Serializable;
 
 /**
- *
- * @author xluis
+     * draws a circle over the towns spots
+     * this is useful for mousing over later
+     * give it a name and a position on the map
+     * @param name
+     * @param x
+     * @param y 
+ * @author luis
  */
 
-public class Town implements Serializable{
+public class Town implements Serializable
+{
     String townName = "";
     ArrayList<RoadPath> paths = new ArrayList<>();
     ArrayList<Meeple> myMeeps = new ArrayList<>();
@@ -22,25 +28,28 @@ public class Town implements Serializable{
     int yLoc = 0;
     Ellipse2D.Double mask; 
     
-    Town(){
-        
-    }
+    Town(){}
     
-    Town(String name, int x, int y){
+    Town(String name, int x, int y)
+    {
         townName = name;
         xLoc = x;
         yLoc = y;
         mask = new Ellipse2D.Double(x,y,20,20);
     }
     
-    public void addPath(RoadPath pathNum){
+    public void addPath(RoadPath pathNum)
+    {
         paths.add(pathNum);
     }
     
-    public int meepleColorCount(String c){
+    public int meepleColorCount(String c)
+    {
         int count = 0;
-        for (Meeple curr: myMeeps){
-            if (curr.myColor.equals(c)){
+        for (Meeple curr: myMeeps)
+        {
+            if (curr.myColor.equals(c))
+            {
                 count++;
             }
         }

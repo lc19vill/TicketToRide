@@ -10,10 +10,14 @@ import java.awt.geom.Rectangle2D;
 import javax.swing.ImageIcon;
 
 /**
- *
- * @author Mike
- */
-public class TixDeck extends GameObject{
+     * more glorified sprites. this time it decides color of the pic
+     * based on the type of deck (there are 2) orange and blue
+     * @param myX
+     * @param myY
+     * @param color 
+     */
+public class TixDeck extends GameObject
+{
     
     transient Image s_deck_blue;
     transient Image s_deck_orange;
@@ -25,7 +29,8 @@ public class TixDeck extends GameObject{
     
     String snd_deck = (dir + "\\TTRAssets\\deck.wav");
 
-    public TixDeck(int myX,int myY,String color){
+    public TixDeck(int myX,int myY,String color)
+    {
         
         s_deck_blue = new ImageIcon(path).getImage();
         s_deck_orange = new ImageIcon(path1).getImage();
@@ -47,8 +52,14 @@ public class TixDeck extends GameObject{
        
     }
     public void colEvent(){};
-    public String toString(){return "null";}
+    
+    public String toString()
+    {
+        return "null";
+    }
+    
     public void clicked(){}
+    
     public void rClicked(){}
 }
 

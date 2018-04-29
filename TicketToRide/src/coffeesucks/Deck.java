@@ -18,7 +18,8 @@ import java.util.concurrent.TimeUnit;
  *
  * @author Mike
  */
-public class Deck extends GameObject{
+public class Deck extends GameObject
+{
     
     transient Image s_deck;
     transient Image s_deck_mid;
@@ -28,8 +29,14 @@ public class Deck extends GameObject{
     String path2= (dir + "\\TTRAssets\\cards\\deck_3.png");
     
     String snd_deck = (dir + "\\TTRAssets\\deck.wav");
-
-    public Deck(int myX,int myY){
+	
+	/**
+     * makes a deck. honestly its basicaly just a button but changes sprs
+     * @param myX
+     * @param myY 
+     */
+    public Deck(int myX,int myY)
+    {
         
         s_deck = new ImageIcon(path).getImage();
         s_deck_mid = new ImageIcon(path1).getImage();

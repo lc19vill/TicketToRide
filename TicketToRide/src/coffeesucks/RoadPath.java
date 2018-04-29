@@ -15,10 +15,24 @@ import java.io.Serializable;
  */
 
 /**
- *
- * @author Mike
- */
-public class RoadPath implements Serializable {
+     * the perams basically draw the polygon. Uses 4 points to keep it simple
+     * color is the color of the path
+     * length is for checking with the selected cards
+     * IDNUM is useful for other checks later
+     * @param x1
+     * @param y1
+     * @param x2
+     * @param y2
+     * @param x3
+     * @param y3
+     * @param x4
+     * @param y4
+     * @param color
+     * @param length
+     * @param IDNUM 
+     */
+public class RoadPath implements Serializable 
+{
     Polygon boundBox = new Polygon();
     int ID;
     transient Image sprite_index = null;
@@ -27,8 +41,9 @@ public class RoadPath implements Serializable {
     int myOwn = 0;
     
     
-    public RoadPath(int x1, int y1, int x2, int y2,int x3, int y3, int x4, int y4, String color, int length,int IDNUM){
-    
+    public RoadPath(int x1, int y1, int x2, int y2,int x3, int y3, int x4, 
+                    int y4, String color, int length,int IDNUM)
+    {
     boundBox.addPoint(x1,y1);
     boundBox.addPoint(x2,y2);
     boundBox.addPoint(x3,y3);
@@ -39,7 +54,8 @@ public class RoadPath implements Serializable {
     myLength = length;
     }   
     
-    public void setOwn(int newOwn){
+    public void setOwn(int newOwn)
+    {
         myOwn = newOwn;
     }
     

@@ -12,17 +12,19 @@ import java.util.ArrayList;
  *
  * @author Mike
  */
-public class Player implements Serializable{
+public class Player implements Serializable
+{
     
-    ArrayList<Card> myHand = new ArrayList<>();
-    ArrayList<Meeple> myMeeps = new ArrayList<>();
-    ArrayList<Ticket> myTix = new ArrayList<>();
-    int ID;
-    int numTrains = 15;
-    int myScore = 0;
-    int numTravel = 0;
+   ArrayList<Card> myHand = new ArrayList<>(); //the cards i have
+    ArrayList<Meeple> myMeeps = new ArrayList<>(); //the meeps i have
+    ArrayList<Ticket> myTix = new ArrayList<>(); // the tix i have
+    int ID; // my ID number
+    int numTrains = 45; //how many trains 
+    int myScore = 0; //what is my score
+    int numTravel = 0; //for globe trotter stuff
 
-    public Player(int myID){
+    public Player(int myID)
+    {
         ID = myID;
     }
     

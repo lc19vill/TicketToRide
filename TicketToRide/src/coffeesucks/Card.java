@@ -16,14 +16,27 @@ import javax.swing.ImageIcon;
  *
  * @author Mike
  */
-public class Card extends GameObject{
+public class Card extends GameObject
+{
     
     transient Image s_card;
     String myState;
     String myColor;
     int colorID = -1;
     
-    public Card(int myX,int myY, String color,String state,int destinationX,int destinationY){
+	
+	 /**
+     * 
+     * @param myX my x positon
+     * @param myY my y position
+     * @param color what color card am i
+     * @param state where am I, what is life
+     * @param destinationX where am i going X
+     * @param destinationY  where am i going Y
+     */
+    public Card(int myX,int myY, String color,String state,
+                int destinationX,int destinationY)
+    {
         String path= (dir + "\\TTRAssets\\cards\\card_" + color + ".png");
         s_card = new ImageIcon(path).getImage();
         sprite_index = s_card;
@@ -36,35 +49,45 @@ public class Card extends GameObject{
        myState = state;
        myColor = color;
        Solid = false;
-       if (myColor.equals("Red")){
+       if (myColor.equals("Red"))
+        {
             colorID = 0;
         }
-        if (myColor.equals("Orange")){
+        if (myColor.equals("Orange"))
+        {
              colorID = 1;
         }
-        if (myColor.equals("Yellow")){
+        if (myColor.equals("Yellow"))
+        {
             colorID = 2;
         }
-        if (myColor.equals("Green")){
+        if (myColor.equals("Green"))
+        {
              colorID = 3;
         }
-        if (myColor.equals("Blue")){
+        if (myColor.equals("Blue"))
+        {
              colorID = 4;
         }
-        if (myColor.equals("Pink")){
+        if (myColor.equals("Pink"))
+        {
              colorID = 5;
         }
-        if (myColor.equals("Black")){
+        if (myColor.equals("Black"))
+        {
              colorID = 6;
         }
-        if (myColor.equals("White")){
+        if (myColor.equals("White"))
+        {
             colorID = 7;
         }
-        if (myColor.equals("Rainbow")){
+        if (myColor.equals("Rainbow"))
+        {
              colorID = 8;
         }
     }
-    public Card(int myX,int myY, String color,String state){
+    public Card(int myX,int myY, String color,String state)
+    {
         String path= (dir + "\\TTRAssets\\cards\\card_" + color + ".png");
         s_card = new ImageIcon(path).getImage();
         sprite_index = s_card;
@@ -76,53 +99,65 @@ public class Card extends GameObject{
        myState = state;
        myColor = color;
        Solid = false;
-       if (myColor.equals("Red")){
+       if (myColor.equals("Red"))
+       {
             colorID = 0;
         }
-        if (myColor.equals("Orange")){
+        if (myColor.equals("Orange"))
+        {
              colorID = 1;
         }
-        if (myColor.equals("Yellow")){
+        if (myColor.equals("Yellow"))
+        {
             colorID = 2;
         }
-        if (myColor.equals("Green")){
+        if (myColor.equals("Green"))
+        {
              colorID = 3;
         }
-        if (myColor.equals("Blue")){
+        if (myColor.equals("Blue"))
+        {
              colorID = 4;
         }
-        if (myColor.equals("Pink")){
+        if (myColor.equals("Pink"))
+        {
              colorID = 5;
         }
-        if (myColor.equals("Black")){
+        if (myColor.equals("Black"))
+        {
              colorID = 6;
         }
-        if (myColor.equals("White")){
+        if (myColor.equals("White"))
+        {
             colorID = 7;
         }
-        if (myColor.equals("Rainbow")){
+        if (myColor.equals("Rainbow"))
+        {
              colorID = 8;
         }
        
-       if (state == "deck"){
+       if (state == "deck")
+       {
            visible = false;
        }
            
        
     }
-    public void colEvent(){
-    
-        
-        
+    public void colEvent()
+    {
     };
     public String toString(){return "null";}
-    public void clicked(){
+    public void clicked()
+    {
     
     
     }
-    public void rClicked(){}
+    public void rClicked()
+    {
+    }
     
-    public String getColor(){
+    public String getColor()
+    {
         return myColor;
     }
    

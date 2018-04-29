@@ -8,14 +8,16 @@ package coffeesucks;
 import java.io.Serializable;
 
 /**
- *
- * @author mk3lero
- */
-public class Meeple implements Serializable{
+     * all this needs is a string color
+     * @param c 
+     */
+public class Meeple implements Serializable
+{
     
     String myColor;
     
-    public Meeple(String c){
+    public Meeple(String c)
+    {
         myColor = c;
     }
     

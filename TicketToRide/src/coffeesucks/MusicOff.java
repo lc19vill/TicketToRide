@@ -9,15 +9,16 @@ import java.awt.Image;
 import java.awt.geom.Rectangle2D;
 import javax.swing.ImageIcon;
 
-/**
- *
- * @author Mike
- */
-public class MusicOff extends GameObject{
+ /**
+       * this is basically another specialized button
+       */
+public class MusicOff extends GameObject
+{
     
       transient Image s_deck;
 
-    public MusicOff(){
+    public MusicOff()
+    {
         String path= (dir + "\\TTRAssets\\nomusic.gif");
         s_deck = new ImageIcon(path).getImage();
         sprite_index = s_deck;
@@ -29,7 +30,10 @@ public class MusicOff extends GameObject{
        
     }
     public void colEvent(){};
-    public String toString(){return "null";}
+    public String toString()
+    {
+        return "null";
+    }
     public void clicked(){}
     public void rClicked(){}
 }

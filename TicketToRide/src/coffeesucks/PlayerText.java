@@ -14,18 +14,21 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import java.util.concurrent.TimeUnit;
-/**
- *
- * @author Mike
- */
-public class PlayerText extends GameObject{
+ /**
+     * this moves across the screen and looks cool. Basically just 
+     * a sprite that moves.
+     * @param player what image do i use?
+     */
+public class PlayerText extends GameObject
+{
  
     String snd_voice="";
     String snd_woosh="";
     transient Image s_text;
     transient Image s_rails;
     
-      public PlayerText(int player){
+      public PlayerText(int player)
+      {
         String path= (dir + "\\TTRAssets\\"+player+"_text.png");
         s_text = new ImageIcon(path).getImage();
         sprite_index = s_text;
@@ -45,8 +48,14 @@ public class PlayerText extends GameObject{
        
     }
     public void colEvent(){};
-    public String toString(){return "null";}
+    
+    public String toString()
+    {
+        return "null";
+    }
+    
     public void clicked(){}
+    
     public void rClicked(){}
 }
 

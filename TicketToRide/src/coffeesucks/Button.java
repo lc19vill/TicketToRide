@@ -15,14 +15,21 @@ import javax.swing.ImageIcon;
 /**
  *
  * @author Mike
+ * Simple, this class creates a clickable button
+ * give it an ID so we can know which one is clicked
+ * w and h create the hitbox
+ * x and y give it position
+ * spr is the sprite path
  */
-public class Button extends GameObject{
+public class Button extends GameObject
+{
     
     String myID;
     transient Image s_butt;
     boolean active = true;
     
-    public Button(String ID, int w, int h,int mx, int my, String spr){
+    public Button(String ID, int w, int h,int mx, int my, String spr)
+    {
         x= mx;
         y= my;
         hitboxHeight = w;
@@ -34,11 +41,15 @@ public class Button extends GameObject{
        
     }
     public void colEvent(){};
-    public String toString(){return "null";}
+    public String toString()
+    {
+        return "null";
+    }
     public void clicked(){}
     public void rClicked(){}
     
-    public void flipActive(){
+    public void flipActive()
+    {
         if (active)
             active = false;
         else
